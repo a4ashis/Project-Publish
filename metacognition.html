@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metacognition Trainer: Mastermind or Monster?</title>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <style>
+        :root {
+            --primary-bg: #1a1a1d;
+            --secondary-bg: #2a2a2f;
+            --tertiary-bg: #3a3a40;
+            --primary-text: #f0f0f5;
+            --secondary-text: #b0b0c0;
+            --accent-color: #4caf50; /* Mastermind Green */
+            --warning-color: #f44336; /* Monster Red */
+            --link-color: #64b5f6;
+            --border-color: #555;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        #app {
+            display: flex;
+            flex-grow: 1;
+        }
+
+        nav {
+            width: 220px;
+            background-color: var(--secondary-bg);
+            padding: 20px 10px;
+            border-right: 1px solid var(--border-color);
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        nav h2 {
+            color: var(--accent-color);
+            margin-top: 0;
+            text-align: center;
+            font-size: 1.2em;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 10px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            flex-grow: 1;
+        }
+
+        nav li button {
+            display: block;
+            width: 100%;
+            padding: 12px 15px;
+            margin-bottom: 8px;
+            background: none;
+            border: none;
+            color: var(--primary-text);
+            text-align: left;
+            cursor: pointer;
+            font-size: 1em;
+            border-radius: 4px;
+            transition: background-color 0.2s ease, color 0.2s ease;
+        }
+
+        nav li button:hover {
+            background-color: var(--tertiary-bg);
+        }
+         nav li button.active {
+            background-color: var(--accent-color);
+            color: var(--primary-bg);
+            font-weight: bold;
+        }
+
+        main {
+            flex-grow: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        h1, h2, h3 {
+            color: var(--primary-text);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 5px;
+        }
+        h1 { font-size: 1.8em; }
+        h2 { font-size: 1.5em; }
+        h3 { font-size: 1.2em; margin-top: 25px; }
+
+        p, li {
+            color: var(--secondary-text);
+        }
+
+        blockquote {
+            background-color: var(--secondary-bg);
+            border-left: 5px solid var(--accent-color);
+            padding: 15px;
+            margin: 15px 0;
+            font-style: italic;
+        }
+
+        .warning-box {
+            background-color: rgba(244, 67, 54, 0.1);
+            border: 1px solid var(--warning-color);
+            border-left-width: 5px;
+            padding: 15px;
+            margin: 20px 0;
+            color: var(--warning-color);
+        }
+        .warning-box strong { color: var(--warning-color); }
+
+        .exercise, .journal-entry, .scenario {
+            background-color: var(--secondary-bg);
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            border: 1px solid var(--border-color);
+        }
+
+        input[type="text"], textarea, select {
+            width: 95%;
+            padding: 10px;
+            margin-bottom: 10px;
+            background-color: var(--tertiary-bg);
+            border: 1px solid var(--border-color);
+            color: var(--primary-text);
+            border-radius: 4px;
+            font-size: 1em;
+        }
+         textarea {
+            min-height: 80px;
+            resize: vertical;
+         }
+
+        button, input[type="file"]::-webkit-file-upload-button {
+            background-color: var(--accent-color);
+            color: var(--primary-bg);
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s ease;
+            margin-right: 10px;
+        }
+
+        button:hover, input[type="file"]::-webkit-file-upload-button:hover {
+            background-color: #388e3c;
+        }
+
+        button.secondary {
+            background-color: var(--tertiary-bg);
+            color: var(--primary-text);
+        }
+        button.secondary:hover {
+             background-color: #555;
+        }
+        button.danger {
+            background-color: var(--warning-color);
+            color: white;
+        }
+        button.danger:hover {
+             background-color: #c62828;
+        }
+
+
+        .journal-entry {
+            position: relative;
+        }
+        .journal-entry button.delete {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            color: var(--warning-color);
+            font-size: 1.2em;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .progress-bar {
+             background-color: var(--tertiary-bg);
+             border-radius: 5px;
+             overflow: hidden;
+             height: 20px;
+             margin-bottom: 20px;
+        }
+        .progress-bar div {
+            height: 100%;
+            background-color: var(--accent-color);
+            text-align: center;
+            color: var(--primary-bg);
+            line-height: 20px;
+            font-weight: bold;
+            transition: width 0.5s ease;
+        }
+
+        .data-management input[type="file"] {
+            display: block;
+            margin-bottom: 15px;
+            color: var(--secondary-text);
+         }
+
+        @media (max-width: 768px) {
+            #app {
+                flex-direction: column;
+            }
+            nav {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid var(--border-color);
+                padding: 10px;
+                height: auto;
+            }
+             nav ul {
+                display: flex;
+                flex-wrap: wrap;
+             }
+             nav li {
+                flex-grow: 1;
+             }
+             nav li button {
+                 text-align: center;
+                 padding: 8px 10px;
+                 font-size: 0.9em;
+                 margin: 2px;
+             }
+            main {
+                padding: 15px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+    <div id="app">
+        <nav>
+            <h2>Metacognition</h2>
+            <ul>
+                <li><button @click="currentModule = 'intro'" :class="{ active: currentModule === 'intro' }">Introduction</button></li>
+                <li><button @click="currentModule = 'labeling'" :class="{ active: currentModule === 'labeling' }">Emotional Labeling</button></li>
+                <li><button @click="currentModule = 'tracking'" :class="{ active: currentModule === 'tracking' }">Thought Tracking</button></li>
+                <li><button @click="currentModule = 'observation'" :class="{ active: currentModule === 'observation' }">Strategic Observation</button></li>
+                <li><button @click="currentModule = 'mastery'" :class="{ active: currentModule === 'mastery' }">Mastery Techniques</button></li>
+                <li><button @click="currentModule = 'progress'" :class="{ active: currentModule === 'progress' }">Progress</button></li>
+                 <li><button @click="currentModule = 'darkside'" :class="{ active: currentModule === 'darkside' }">The Dark Side</button></li>
+            </ul>
+             <button @click="currentModule = 'data'" :class="{ active: currentModule === 'data' }" class="secondary">Data Import/Export</button>
+        </nav>
+
+        <main>
+            <!-- Introduction Module -->
+            <section v-if="currentModule === 'intro'">
+                <h1>Introduction: The Metacognition Edge</h1>
+                <blockquote>
+                    "this isn't a tip it's a warning... this brain hack doesn't just make you powerful it makes you dangerous..."
+                </blockquote>
+                <p>Metacognition is the ability to think about your own thinking. It's the difference between reacting passively and acting strategically.</p>
+
+                <h3>Level 1 vs. Level 2 Thinking</h3>
+                <p><strong>Level 1 (The Pawn):</strong> Reacts directly to feelings. Angry -> Yell. Nervous -> Avoid. Confident -> Speak. Lives on emotional autopilot.</p>
+                <p><strong>Level 2 (The Chess Player):</strong> Observes feelings, questions actions. "Why do I feel this? Is this emotion helpful? What happens next if I do this?" This is where conscious control begins.</p>
+                <blockquote>
+                    "...the difference between a pawn and a chess player between a person who gets played and a person who plays the board."
+                </blockquote>
+                 <p>This trainer will guide you through key metacognitive skills. Use them wisely to enhance self-awareness and emotional intelligence. Be mindful of the potential for manipulation (the "Monster" path), which we'll also explore to help you recognize and protect yourself.</p>
+            </section>
+
+            <!-- Emotional Labeling Module -->
+            <section v-if="currentModule === 'labeling'">
+                <h1>Module: Emotional Labeling</h1>
+                <p>Understanding your emotions, not just feeling them, is the foundation of emotional intelligence. Stop emotional autopilot.</p>
+                <blockquote>
+                    "Most people live in emotional autopilot... they react no pause no processing just action... a metacognitive thinker does something different they step back from the emotion they observe it..."
+                </blockquote>
+                <h3>Why Label Emotions?</h3>
+                <ul>
+                    <li>Avoid regrettable reactions.</li>
+                    <li>Remain calm under pressure (naming reduces intensity).</li>
+                    <li>Understand others better (practice on self improves reading others).</li>
+                </ul>
+                <blockquote>"unlabeled emotions control you labeled emotions obey you"</blockquote>
+
+                <div class="exercise">
+                    <h3>Practice: Label in Layers</h3>
+                    <p>When you feel a strong emotion, pause and ask:</p>
+                    <ol>
+                        <li><strong>What is the surface emotion I'm feeling right now?</strong> <input type="text" v-model="labelingPractice.surface" placeholder="e.g., Angry, Anxious, Sad"></li>
+                        <li><strong>What triggered it?</strong> <textarea v-model="labelingPractice.trigger" placeholder="Describe the situation or thought"></textarea></li>
+                        <li><strong>Is this the true emotion, or is there a deeper one?</strong> <input type="text" v-model="labelingPractice.deeper" placeholder="e.g., Embarrassed, Powerless, Tired, Ashamed"></li>
+                        <li><strong>What unmet need or belief might be fueling this?</strong> <textarea v-model="labelingPractice.need" placeholder="e.g., Need for control, Belief I'm not good enough, Need for rest"></textarea></li>
+                    </ol>
+                    <button @click="completeLabelingPractice">Log Practice & Earn Point</button>
+                    <p v-if="labelingFeedback">{{ labelingFeedback }}</p>
+                </div>
+
+                 <!-- Placeholder for Scenario-based labeling -->
+                 <h3>Scenario Challenge (Coming Soon)</h3>
+                 <p>Analyze scenarios and identify the true underlying emotions.</p>
+
+            </section>
+
+            <!-- Thought Tracking Module -->
+            <section v-if="currentModule === 'tracking'">
+                <h1>Module: Thought Tracking Journal</h1>
+                 <p>Your thoughts are blueprints. Unexamined thoughts, especially negative ones, can build a life you didn't choose.</p>
+                <blockquote>"Most people don't think they're thoughts they receive them like mental notifications they never unsubscribed from... they don't question these thoughts they believe them."</blockquote>
+                <h3>The Metacognitive Truth:</h3>
+                <ul>
+                    <li>Not every thought is yours (inherited, absorbed).</li>
+                    <li>Not every thought is true.</li>
+                    <li>Not every thought deserves your attention.</li>
+                </ul>
+                 <p>Tracking involves pausing, identifying thoughts, and questioning their validity and utility.</p>
+                <blockquote>"It's like installing a security camera inside your mind... you check its ID."</blockquote>
+
+                <div class="exercise">
+                    <h3>Log a Thought</h3>
+                    <form @submit.prevent="addJournalEntry">
+                        <div>
+                            <label><strong>The Thought:</strong></label>
+                            <textarea v-model="newJournalEntry.text" placeholder="e.g., 'I'm not good enough for this', 'This will never work'" required></textarea>
+                        </div>
+                         <div>
+                             <strong>Categorize:</strong><br>
+                             <input type="radio" id="helpful" value="helpful" v-model="newJournalEntry.category"> <label for="helpful">Helpful</label> /
+                             <input type="radio" id="harmful" value="harmful" v-model="newJournalEntry.category"> <label for="harmful">Harmful</label><br>
+                             <input type="radio" id="fact" value="fact" v-model="newJournalEntry.basis"> <label for="fact">Fact-Based</label> /
+                             <input type="radio" id="fear" value="fear" v-model="newJournalEntry.basis"> <label for="fear">Fear-Based</label><br>
+                             <input type="radio" id="chosen" value="chosen" v-model="newJournalEntry.origin"> <label for="chosen">Chosen</label> /
+                             <input type="radio" id="installed" value="installed" v-model="newJournalEntry.origin"> <label for="installed">Installed/Inherited</label>
+                         </div>
+                        <div>
+                            <label><strong>Analysis (Question the Thought):</strong></label>
+                             <textarea v-model="newJournalEntry.analysis" placeholder="Where did it come from? Evidence for/against? Is it useful? What's a chosen alternative belief?"></textarea>
+                        </div>
+                        <button type="submit">Add Entry & Earn Point</button>
+                    </form>
+                </div>
+
+                <h3>Your Journal Entries</h3>
+                 <p v-if="journalEntries.length === 0">No entries yet. Start tracking your thoughts!</p>
+                <div v-for="(entry, index) in journalEntries" :key="entry.id" class="journal-entry">
+                    <button @click="deleteJournalEntry(index)" class="delete" title="Delete Entry">&times;</button>
+                    <p><strong>Thought:</strong> {{ entry.text }}</p>
+                    <p><strong>Categorization:</strong> {{ entry.category || 'N/A' }} | {{ entry.basis || 'N/A' }} | {{ entry.origin || 'N/A' }}</p>
+                    <p><strong>Analysis:</strong> {{ entry.analysis || 'No analysis provided.' }}</p>
+                    <small>Logged on: {{ new Date(entry.id).toLocaleString() }}</small>
+                </div>
+            </section>
+
+            <!-- Strategic Observation Module -->
+             <section v-if="currentModule === 'observation'">
+                <h1>Module: Strategic Observation</h1>
+                <p>Go beyond hearing words; observe the entire social chessboard. Split your awareness: participate and watch simultaneously.</p>
+                 <blockquote>"Channel one you're fully engaged... Channel two you're quietly watching everything unfold... This second channel is where the game really begins."</blockquote>
+                 <h3>What to Notice:</h3>
+                 <ul>
+                     <li><strong>Micro-reactions:</strong> Flickers, clenches, twitches (leaked truths).</li>
+                     <li><strong>Hesitations/Pauses:</strong> Uncertainty, internal conflict, deception.</li>
+                     <li><strong>Power Moves:</strong> Interruptions, mirroring, leaning (status dances).</li>
+                     <li><strong>Emotional Triggers:</strong> Overreactions to certain topics (pressure points).</li>
+                     <li><strong>Incongruence:</strong> Fake smiles, forced laughter (masking intent).</li>
+                 </ul>
+                 <blockquote>"It's like putting on x-ray glasses for human interaction."</blockquote>
+
+                 <div class="warning-box">
+                     <strong>Warning: The Monster's Toolkit</strong>
+                     <p>This skill is neutral, but manipulators weaponize it. They observe to find weaknesses, test reactions, and exploit vulnerabilities. Understanding this helps you recognize and defend against it.</p>
+                     <blockquote>"...with the same awareness you can disarm them or you can become one of them... That's where the line between Mastermind and monster begins to blur."</blockquote>
+                 </div>
+
+                 <h3>Scenario Simulator (Example)</h3>
+                 <div class="scenario">
+                    <p><strong>Scenario:</strong> You're presenting an idea in a meeting. A senior colleague, Alex, laughs loudly after you finish a point, slightly longer than seems natural, while looking around the room briefly before looking back at you.</p>
+                    <p><strong>Analysis Questions:</strong></p>
+                    <ol>
+                        <li>What might the extended laughter signal? (Select best fit)
+                            <select v-model="scenario1.q1">
+                                <option disabled value="">Please select one</option>
+                                <option>Genuine amusement</option>
+                                <option>Nervousness</option>
+                                <option>Dominance play disguised as humor</option>
+                                <option>Distraction</option>
+                             </select>
+                        </li>
+                        <li>The brief look around the room might indicate:
+                             <select v-model="scenario1.q2">
+                                 <option disabled value="">Please select one</option>
+                                 <option>Checking for others' reactions / seeking allies</option>
+                                 <option>Losing focus</option>
+                                 <option>Simple eye movement</option>
+                                 <option>Looking for the time</option>
+                              </select>
+                         </li>
+                         <li>Based on the transcript, a strategic (Level 2) response would be to:
+                              <select v-model="scenario1.q3">
+                                 <option disabled value="">Please select one</option>
+                                 <option>Laugh along nervously</option>
+                                 <option>Confront Alex about the laugh</option>
+                                 <option>Ignore it and feel small</option>
+                                 <option>Calmly pivot/redirect, possibly reasserting value without direct confrontation</option>
+                              </select>
+                         </li>
+                    </ol>
+                    <button @click="checkScenario(1)">Check Answers & Earn Points</button>
+                     <p v-if="scenario1.feedback">{{ scenario1.feedback }}</p>
+                 </div>
+                 <!-- Add more scenarios here -->
+            </section>
+
+            <!-- Mastery Techniques Module -->
+            <section v-if="currentModule === 'mastery'">
+                <h1>Module: Mastering Metacognition</h1>
+                 <p>Consistent practice turns awareness into skill. Here are techniques from the transcript:</p>
+
+                 <div class="exercise">
+                    <h3>1. Third-Person Self-Talk</h3>
+                    <p>Narrate your thoughts/emotions as an observer ("He is feeling X because...") to create distance and engage the rational brain.</p>
+                    <label>Your current feeling/thought (I am...):</label>
+                    <input type="text" v-model="mastery.thirdPerson.input" placeholder="e.g., I am overwhelmed">
+                     <label>Reframe in third person (He/She is...):</label>
+                    <input type="text" :placeholder="'e.g., ' + mastery.thirdPerson.placeholder">
+                    <button @click="practiceTechnique('thirdPerson')">Log Practice</button>
+                </div>
+
+                 <div class="exercise">
+                     <h3>2. Daily Rewind / Reflection</h3>
+                     <p>End-of-day 5-minute review: Strongest emotion? Trigger? React/Respond? Different next time? Keep a "Mental Moves Journal" (use Thought Tracker).</p>
+                     <p><em>Use the Thought Tracking Journal module for this. Aim for one reflective entry daily.</em></p>
+                 </div>
+
+                <div class="exercise">
+                    <h3>3. Treat Thoughts as Non-Facts</h3>
+                    <p>Categorize thoughts (Fact/Feeling, Helpful/Harmful). Challenge limiting thoughts with: "That's just a thought, not a truth."</p>
+                     <label>A limiting thought:</label>
+                    <input type="text" v-model="mastery.nonFact.input" placeholder="e.g., I'll probably fail">
+                    <label>Respond ("That's just a thought..."):</label>
+                    <input type="text" :placeholder="mastery.nonFact.placeholder">
+                     <button @click="practiceTechnique('nonFact')">Log Practice</button>
+                </div>
+
+                 <div class="exercise">
+                     <h3>4. Split Awareness Practice</h3>
+                     <p>In conversations, consciously track your *own* thoughts/feelings AND observe the *other person* (What are they trying to get? What aren't they saying? What triggered their reaction?).</p>
+                     <p><em>Practice this actively in your next conversation. No specific logging here, focus on real-world application.</em></p>
+                     <p>Mastery Formula Recap: <strong>Pause -> Label -> Question -> Choose -> Reflect</strong></p>
+                 </div>
+            </section>
+
+            <!-- Progress Module -->
+            <section v-if="currentModule === 'progress'">
+                <h1>Your Progress</h1>
+                <p>Keep practicing to sharpen your metacognitive skills!</p>
+                <h3>Score: {{ score }} points</h3>
+                 <p>(Points awarded for logging practices, journal entries, and completing scenario challenges)</p>
+
+                 <h3>Mastery Level: {{ masteryLevel }}</h3>
+                <div class="progress-bar">
+                     <div :style="{ width: progressPercentage + '%' }">{{ progressPercentage }}%</div>
+                </div>
+                <p>Levels: Novice (0-20), Apprentice (21-50), Adept (51-100), Strategist (101-200), Mastermind (201+)</p>
+            </section>
+
+            <!-- Dark Side Module -->
+            <section v-if="currentModule === 'darkside'">
+                 <h1>The Dark Side: Recognizing Manipulation</h1>
+                 <p>Understanding how metacognitive skills can be twisted into manipulative tactics is crucial for self-protection.</p>
+                 <blockquote>"what happens when someone uses this ability without empathy... when they don't want to understand people they want to use them? That's when a mastermind becomes something far more dangerous a monster."</blockquote>
+                 <h3>Common Manipulative Tactics (Using Metacognition):</h3>
+                 <ul>
+                     <li><strong>Exploiting Insecurities:</strong> Analyzing fears to make you feel worthless or dependent (e.g., "No one else understands you like I do").</li>
+                     <li><strong>Thought Inception:</strong> Planting ideas subtly so you think they're yours (e.g., using leading questions or repetition).</li>
+                     <li><strong>Calculated Silence:</strong> Using pauses or delayed responses to create pressure, guilt, or anxiety.</li>
+                     <li><strong>Reward/Punishment Loops:</strong> Giving/withdrawing affection or approval to control behavior (common in toxic dynamics).</li>
+                     <li><strong>Playing the Victim:</strong> Oversharing or feigning weakness to build false trust, create obligation, or manipulate guilt.</li>
+                 </ul>
+                  <div class="warning-box">
+                     <strong>Stay Vigilant:</strong> Recognize these patterns in others. Use your own metacognitive skills (observation, questioning) to see behind masks and protect your mental space. The goal is awareness and defense, not adopting these tactics.
+                  </div>
+                   <blockquote>"mastering this brain hack means facing the darkness inside you first."</blockquote>
+            </section>
+
+            <!-- Data Management Module -->
+            <section v-if="currentModule === 'data'" class="data-management">
+                <h1>Data Import / Export</h1>
+                <p>Save your progress and journal entries to a file, or load data from a previous session.</p>
+
+                <div>
+                    <h3>Export Data</h3>
+                    <button @click="exportData">Download Data File (.json)</button>
+                     <p><small>This will save your current score and all journal entries.</small></p>
+                </div>
+
+                 <hr style="border-color: var(--border-color); margin: 20px 0;">
+
+                <div>
+                    <h3>Import Data</h3>
+                    <p>Select a previously exported `.json` file.</p>
+                    <input type="file" @change="handleFileUpload" accept=".json">
+                    <button @click="importData" :disabled="!importFileContent">Import Data</button>
+                     <p v-if="importStatus" :style="{ color: importStatus.includes('Error') ? 'var(--warning-color)' : 'var(--accent-color)' }">{{ importStatus }}</p>
+                    <p><strong style="color: var(--warning-color)">Warning:</strong> Importing will overwrite your current progress and journal entries in this browser.</p>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        const { createApp, ref, reactive, computed, onMounted } = Vue;
+
+        createApp({
+            setup() {
+                // --- State ---
+                const currentModule = ref('intro'); // Initial module
+                const score = ref(0);
+                const journalEntries = ref([]);
+                const practiceLog = ref({ // Track simple practice counts
+                     thirdPerson: 0,
+                     nonFact: 0,
+                     labeling: 0
+                 });
+
+                const labelingPractice = reactive({ surface: '', trigger: '', deeper: '', need: '' });
+                const labelingFeedback = ref('');
+
+                const newJournalEntry = reactive({ text: '', category: '', basis: '', origin: '', analysis: '' });
+
+                // Example Scenario State
+                const scenario1 = reactive({ q1: '', q2: '', q3: '', feedback: '' });
+                // Add more scenario states here...
+
+                // Mastery Practice State
+                const mastery = reactive({
+                    thirdPerson: { input: '', placeholder: "He/She is..." },
+                    nonFact: { input: '', placeholder: "That's just a thought..." }
+                });
+
+                // Import/Export State
+                const importFileContent = ref(null);
+                const importStatus = ref('');
+
+                // --- Computed Properties ---
+                const masteryLevel = computed(() => {
+                    if (score.value <= 20) return 'Novice';
+                    if (score.value <= 50) return 'Apprentice';
+                    if (score.value <= 100) return 'Adept';
+                     if (score.value <= 200) return 'Strategist';
+                    return 'Mastermind';
+                });
+
+                 const maxScoreForProgress = 201; // Score needed to reach 100% Mastermind
+                const progressPercentage = computed(() => {
+                    return Math.min(100, Math.round((score.value / maxScoreForProgress) * 100));
+                });
+
+                // --- Methods ---
+                const awardPoints = (points = 1) => {
+                    score.value += points;
+                    saveState();
+                };
+
+                 const completeLabelingPractice = () => {
+                    if (!labelingPractice.surface || !labelingPractice.trigger) {
+                         labelingFeedback.value = "Please fill in at least the surface emotion and trigger.";
+                         return;
+                     }
+                    // Could add more complex validation/feedback here
+                    awardPoints(1);
+                     practiceLog.value.labeling++;
+                    labelingFeedback.value = `Practice logged! Score +1. Total Labeling Practices: ${practiceLog.value.labeling}`;
+                    // Clear inputs after logging
+                     Object.assign(labelingPractice, { surface: '', trigger: '', deeper: '', need: '' });
+                    saveState(); // Save practice count
+                 };
+
+                const addJournalEntry = () => {
+                    if (!newJournalEntry.text) return;
+                    journalEntries.value.unshift({ // Add to the beginning
+                        id: Date.now(), // Simple unique ID
+                        ...newJournalEntry
+                    });
+                     // Clear the form
+                    Object.assign(newJournalEntry, { text: '', category: '', basis: '', origin: '', analysis: '' });
+                    awardPoints(2); // Award more for thoughtful entries
+                    saveState();
+                };
+
+                const deleteJournalEntry = (index) => {
+                    if (confirm('Are you sure you want to delete this journal entry?')) {
+                        journalEntries.value.splice(index, 1);
+                        saveState();
+                    }
+                };
+
+                 const checkScenario = (scenarioNum) => {
+                     let points = 0;
+                     let feedback = "Analysis: ";
+                    if (scenarioNum === 1) {
+                         // Correct answers based on transcript interpretation
+                         const correct = { q1: 'Dominance play disguised as humor', q2: "Checking for others' reactions / seeking allies", q3: 'Calmly pivot/redirect, possibly reasserting value without direct confrontation' };
+                         if (scenario1.q1 === correct.q1) points++; else feedback += "Q1 - Consider the context; prolonged laughter can be performative. ";
+                         if (scenario1.q2 === correct.q2) points++; else feedback += "Q2 - Looking around often gauges social impact. ";
+                         if (scenario1.q3 === correct.q3) points++; else feedback += "Q3 - Level 2 thinking avoids emotional reaction, focuses on strategy. ";
+
+                        if (points === 3) feedback = "Excellent analysis! All correct. +3 points";
+                         else if (points > 0) feedback += ` Score +${points}`;
+                         else feedback = "Review the Strategic Observation concepts. No points awarded this time.";
+
+                         scenario1.feedback = feedback;
+                         if (points > 0) awardPoints(points);
+                    }
+                    // Add logic for other scenarios...
+                 };
+
+                 const practiceTechnique = (technique) => {
+                     if (technique === 'thirdPerson' && mastery.thirdPerson.input) {
+                         practiceLog.value.thirdPerson++;
+                         awardPoints(1);
+                          mastery.thirdPerson.input = ''; // Clear input
+                     } else if (technique === 'nonFact' && mastery.nonFact.input) {
+                         practiceLog.value.nonFact++;
+                         awardPoints(1);
+                          mastery.nonFact.input = ''; // Clear input
+                     }
+                     saveState(); // Save practice counts
+                     // Add feedback if needed
+                 };
+
+                // --- Persistence ---
+                const saveState = () => {
+                    try {
+                        const dataToSave = {
+                            score: score.value,
+                            journalEntries: journalEntries.value,
+                            practiceLog: practiceLog.value,
+                            // Save scenario progress if desired
+                        };
+                        localStorage.setItem('metacognitionTrainerData', JSON.stringify(dataToSave));
+                        console.log("State saved.");
+                    } catch (e) {
+                        console.error("Error saving state:", e);
+                        alert("Error saving progress to local storage. Storage might be full or disabled.");
+                    }
+                };
+
+                const loadState = () => {
+                    try {
+                        const savedData = localStorage.getItem('metacognitionTrainerData');
+                        if (savedData) {
+                            const parsedData = JSON.parse(savedData);
+                            score.value = parsedData.score || 0;
+                            journalEntries.value = parsedData.journalEntries || [];
+                             practiceLog.value = parsedData.practiceLog || { thirdPerson: 0, nonFact: 0, labeling: 0 };
+                            console.log("State loaded.");
+                        }
+                    } catch (e) {
+                        console.error("Error loading state:", e);
+                         alert("Error loading saved progress. Data might be corrupted.");
+                        // Reset to default if loading fails catastrophically
+                         localStorage.removeItem('metacognitionTrainerData');
+                    }
+                };
+
+                // --- Import / Export ---
+                const exportData = () => {
+                     try {
+                         const dataToSave = {
+                            version: 1, // Add versioning for future compatibility
+                            timestamp: new Date().toISOString(),
+                            score: score.value,
+                            journalEntries: journalEntries.value,
+                             practiceLog: practiceLog.value,
+                             // Include other relevant state if needed
+                         };
+                         const jsonString = JSON.stringify(dataToSave, null, 2); // Pretty print JSON
+                         const blob = new Blob([jsonString], { type: 'application/json' });
+                         const url = URL.createObjectURL(blob);
+                         const link = document.createElement('a');
+                         link.href = url;
+                         link.download = `metacognition_trainer_backup_${new Date().toISOString().split('T')[0]}.json`;
+                         document.body.appendChild(link);
+                         link.click();
+                         document.body.removeChild(link);
+                         URL.revokeObjectURL(url);
+                         importStatus.value = 'Data exported successfully.';
+                     } catch (e) {
+                         console.error("Export error:", e);
+                         importStatus.value = 'Error exporting data.';
+                         alert('An error occurred during data export.');
+                     }
+                };
+
+                const handleFileUpload = (event) => {
+                    const file = event.target.files[0];
+                    if (!file) {
+                        importFileContent.value = null;
+                        importStatus.value = '';
+                        return;
+                    }
+
+                    const reader = new FileReader();
+                    reader.onload = (e) => {
+                        importFileContent.value = e.target.result;
+                        importStatus.value = `File "${file.name}" ready for import.`;
+                    };
+                    reader.onerror = (e) => {
+                        console.error("File reading error:", e);
+                        importStatus.value = "Error reading file.";
+                        importFileContent.value = null;
+                    };
+                    reader.readAsText(file);
+                     // Reset file input visually (optional, browser-dependent)
+                    event.target.value = null;
+                };
+
+                 const importData = () => {
+                    if (!importFileContent.value) {
+                         importStatus.value = "No file selected or file is empty.";
+                        return;
+                    }
+
+                    if (!confirm('This will overwrite ALL current data in the application. Are you sure you want to import?')) {
+                         importStatus.value = "Import cancelled by user.";
+                         return;
+                     }
+
+                    try {
+                        const importedData = JSON.parse(importFileContent.value);
+
+                         // Basic validation (check for expected keys)
+                        if (typeof importedData.score !== 'number' || !Array.isArray(importedData.journalEntries) || typeof importedData.practiceLog !== 'object') {
+                            throw new Error("Invalid data structure in imported file.");
+                        }
+
+                        // Apply imported data
+                        score.value = importedData.score;
+                        journalEntries.value = importedData.journalEntries;
+                         practiceLog.value = importedData.practiceLog;
+                        // Load other state if saved/imported
+
+                        // Save the newly imported state to localStorage
+                        saveState();
+
+                        importStatus.value = "Data imported successfully! Reloading may be required for some elements.";
+                        importFileContent.value = null; // Clear buffer
+                         // Optionally, force a re-render or navigate to a default page
+                         currentModule.value = 'progress'; // Go to progress page after import
+
+                    } catch (e) {
+                        console.error("Import error:", e);
+                         importStatus.value = `Error importing data: ${e.message}. Please check file format.`;
+                        alert(`Import failed: ${e.message}`);
+                    }
+                };
+
+
+                // --- Lifecycle ---
+                onMounted(() => {
+                    loadState();
+                });
+
+                // --- Return values accessible in template ---
+                return {
+                    currentModule,
+                    score,
+                    journalEntries,
+                    addJournalEntry,
+                    deleteJournalEntry,
+                    newJournalEntry,
+                    masteryLevel,
+                    progressPercentage,
+                    exportData,
+                    handleFileUpload,
+                    importData,
+                    importFileContent,
+                    importStatus,
+                    labelingPractice,
+                    completeLabelingPractice,
+                    labelingFeedback,
+                    scenario1, // Make scenario states available
+                    checkScenario,
+                     mastery,
+                     practiceLog,
+                     practiceTechnique
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
