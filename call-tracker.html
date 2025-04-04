@@ -1,0 +1,985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Call Tracker</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-top: 0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+        }
+        .buttons {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button.secondary {
+            background-color: #95a5a6;
+        }
+        button.secondary:hover {
+            background-color: #7f8c8d;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .follow-up-due {
+            background-color: #ffecb3;
+        }
+        .status-closed {
+            color: green;
+        }
+        .status-required {
+            color: orange;
+        }
+        .status-not-responding {
+            color: red;
+        }
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            background-color: #f8f8f8;
+            border: 1px solid #ddd;
+            border-bottom: none;
+            margin-right: 5px;
+            border-radius: 4px 4px 0 0;
+        }
+        .tab.active {
+            background-color: white;
+            border-bottom: 1px solid white;
+            margin-bottom: -1px;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .search-filter {
+            display: flex;
+            margin-bottom: 20px;
+        }
+        .search-filter input {
+            flex: 1;
+            margin-right: 10px;
+        }
+        .search-filter select {
+            width: 200px;
+        }
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: #4CAF50;
+            color: white;
+            padding: 15px;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            display: none;
+            z-index: 1000;
+        }
+        .export-options {
+            margin-bottom: 20px;
+        }
+        .conversation-text {
+            white-space: pre-wrap;
+            margin-top: 10px;
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 4px;
+            border: 1px solid #eee;
+        }
+        .history-item {
+            margin-bottom: 15px;
+            padding: 10px;
+            border-left: 3px solid #3498db;
+            background-color: #f9f9f9;
+        }
+        .history-date {
+            font-size: 0.9em;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+        }
+        .expand-btn {
+            background: none;
+            border: none;
+            color: #3498db;
+            cursor: pointer;
+            padding: 0;
+            font-size: 0.9em;
+            margin-left: 5px;
+        }
+        .call-details {
+            display: none;
+        }
+        .modal-content {
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Call Tracker</h1>
+        
+        <div class="tabs">
+            <div class="tab active" data-tab="new-call">New Call</div>
+            <div class="tab" data-tab="view-calls">View Calls</div>
+            <div class="tab" data-tab="reminders">Reminders</div>
+        </div>
+        
+        <!-- New Call Tab -->
+        <div class="tab-content active" id="new-call">
+            <h2>Log New Call</h2>
+            <form id="call-form">
+                <div class="form-group">
+                    <label for="call-date">Call Date & Time:</label>
+                    <input type="datetime-local" id="call-date" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="mandi-name">Mandi Name:</label>
+                    <input type="text" id="mandi-name" placeholder="Enter mandi name" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone-number">Phone Number:</label>
+                    <input type="tel" id="phone-number" placeholder="Enter phone number" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="conversation">Conversation Summary:</label>
+                    <textarea id="conversation" placeholder="Enter conversation details" required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="follow-up-date">Follow-up Date & Time:</label>
+                    <input type="datetime-local" id="follow-up-date">
+                </div>
+                
+                <div class="form-group">
+                    <label for="status">Status:</label>
+                    <select id="status" required>
+                        <option value="Follow Up Required">Follow Up Required</option>
+                        <option value="Closed">Closed</option>
+                        <option value="Not Responding">Not Responding</option>
+                        <option value="Pending Payment">Pending Payment</option>
+                        <option value="Escalated">Escalated</option>
+                    </select>
+                </div>
+                
+                <div class="buttons">
+                    <button type="submit">Save Call</button>
+                    <button type="reset">Clear Form</button>
+                </div>
+            </form>
+        </div>
+        
+        <!-- View Calls Tab -->
+        <div class="tab-content" id="view-calls">
+            <h2>View Call History</h2>
+            
+            <div class="search-filter">
+                <input type="text" id="search-calls" placeholder="Search by mandi name, phone number, or conversation...">
+                <select id="filter-status">
+                    <option value="All">All Statuses</option>
+                    <option value="Follow Up Required">Follow Up Required</option>
+                    <option value="Closed">Closed</option>
+                    <option value="Not Responding">Not Responding</option>
+                    <option value="Pending Payment">Pending Payment</option>
+                    <option value="Escalated">Escalated</option>
+                </select>
+            </div>
+            
+            <div class="export-options">
+                <button id="export-csv">Export to CSV</button>
+                <button id="export-json">Export to JSON</button>
+                <button id="import-data">Import Data</button>
+                <input type="file" id="import-file" accept=".json,.csv" style="display: none;">
+            </div>
+            
+            <div id="calls-container">
+                <!-- Call records will be displayed here -->
+            </div>
+        </div>
+        
+        <!-- Reminders Tab -->
+        <div class="tab-content" id="reminders">
+            <h2>Follow-up Reminders</h2>
+            <table id="reminders-table">
+                <thead>
+                    <tr>
+                        <th>Mandi Name</th>
+                        <th>Phone Number</th>
+                        <th>Follow-up Date</th>
+                        <th>Status</th>
+                        <th>Last Conversation</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="reminder-list">
+                    <!-- Reminders will be displayed here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Notification Element -->
+    <div class="notification" id="notification">
+        Notification message here
+    </div>
+    
+    <!-- Call Edit Modal -->
+    <div id="edit-modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); z-index: 999;">
+        <div style="background-color: white; margin: 5% auto; padding: 20px; width: 60%; border-radius: 8px; max-width: 800px;">
+            <div class="modal-content">
+                <h2>Edit Call</h2>
+                <form id="edit-form">
+                    <input type="hidden" id="edit-id">
+                    <div class="form-group">
+                        <label for="edit-call-date">Call Date & Time:</label>
+                        <input type="datetime-local" id="edit-call-date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-mandi-name">Mandi Name:</label>
+                        <input type="text" id="edit-mandi-name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-phone-number">Phone Number:</label>
+                        <input type="tel" id="edit-phone-number" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-conversation">Conversation Summary:</label>
+                        <textarea id="edit-conversation" required></textarea>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-follow-up-date">Follow-up Date & Time:</label>
+                        <input type="datetime-local" id="edit-follow-up-date">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="edit-status">Status:</label>
+                        <select id="edit-status" required>
+                            <option value="Follow Up Required">Follow Up Required</option>
+                            <option value="Closed">Closed</option>
+                            <option value="Not Responding">Not Responding</option>
+                            <option value="Pending Payment">Pending Payment</option>
+                            <option value="Escalated">Escalated</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Previous Conversations:</label>
+                        <div id="edit-history"></div>
+                    </div>
+                    
+                    <div class="buttons">
+                        <button type="submit">Update</button>
+                        <button type="button" id="close-modal" class="secondary">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize local storage
+        if (!localStorage.getItem('mandiCalls')) {
+            localStorage.setItem('mandiCalls', JSON.stringify([]));
+        }
+        
+        // DOM Elements
+        const callForm = document.getElementById('call-form');
+        const callsContainer = document.getElementById('calls-container');
+        const reminderList = document.getElementById('reminder-list');
+        const tabs = document.querySelectorAll('.tab');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const notification = document.getElementById('notification');
+        const searchInput = document.getElementById('search-calls');
+        const statusFilter = document.getElementById('filter-status');
+        const exportCSVBtn = document.getElementById('export-csv');
+        const exportJSONBtn = document.getElementById('export-json');
+        const importDataBtn = document.getElementById('import-data');
+        const importFileInput = document.getElementById('import-file');
+        const editModal = document.getElementById('edit-modal');
+        const editForm = document.getElementById('edit-form');
+        const closeModalBtn = document.getElementById('close-modal');
+        
+        // Tab Switching
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tabContents.forEach(tc => tc.classList.remove('active'));
+                
+                tab.classList.add('active');
+                const tabId = tab.getAttribute('data-tab');
+                document.getElementById(tabId).classList.add('active');
+                
+                if (tabId === 'view-calls') {
+                    renderCalls();
+                } else if (tabId === 'reminders') {
+                    checkReminders(true);
+                }
+            });
+        });
+        
+        // Form Submit
+        callForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const callDate = document.getElementById('call-date').value;
+            const mandiName = document.getElementById('mandi-name').value;
+            const phoneNumber = document.getElementById('phone-number').value;
+            const conversation = document.getElementById('conversation').value;
+            const followUpDate = document.getElementById('follow-up-date').value;
+            const status = document.getElementById('status').value;
+            
+            // Get existing calls to find previous conversations with this mandi/phone
+            const calls = JSON.parse(localStorage.getItem('mandiCalls'));
+            const existingCalls = calls.filter(call => 
+                call.mandiName === mandiName && call.phoneNumber === phoneNumber
+            );
+            
+            // Create conversation history array
+            let history = [];
+            if (existingCalls.length > 0) {
+                // Extract history from the most recent call
+                const mostRecentCall = existingCalls.sort((a, b) => 
+                    new Date(b.callDate) - new Date(a.callDate)
+                )[0];
+                
+                if (mostRecentCall.history) {
+                    history = [...mostRecentCall.history];
+                }
+                
+                // Add the most recent call to history
+                history.push({
+                    callDate: mostRecentCall.callDate,
+                    conversation: mostRecentCall.conversation,
+                    status: mostRecentCall.status
+                });
+            }
+            
+            const newCall = {
+                id: Date.now(),
+                callDate,
+                mandiName,
+                phoneNumber,
+                conversation,
+                followUpDate,
+                status,
+                reminderShown: false,
+                history: history
+            };
+            
+            calls.push(newCall);
+            localStorage.setItem('mandiCalls', JSON.stringify(calls));
+            
+            callForm.reset();
+            showNotification('Call logged successfully!');
+            
+            // Set default call date to current date and time
+            const now = new Date();
+            const formattedDate = now.toISOString().slice(0, 16);
+            document.getElementById('call-date').value = formattedDate;
+        });
+        
+        // Search and Filter
+        searchInput.addEventListener('input', renderCalls);
+        statusFilter.addEventListener('change', renderCalls);
+        
+        // Export Data
+        exportCSVBtn.addEventListener('click', exportToCSV);
+        exportJSONBtn.addEventListener('click', exportToJSON);
+        
+        // Import Data
+        importDataBtn.addEventListener('click', () => {
+            importFileInput.click();
+        });
+        
+        importFileInput.addEventListener('change', importData);
+        
+        // Edit Modal
+        closeModalBtn.addEventListener('click', () => {
+            editModal.style.display = 'none';
+        });
+        
+        editForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    
+    const id = document.getElementById('edit-id').value;
+    const callDate = document.getElementById('edit-call-date').value;
+    const mandiName = document.getElementById('edit-mandi-name').value;
+    const phoneNumber = document.getElementById('edit-phone-number').value;
+    const conversation = document.getElementById('edit-conversation').value;
+    const followUpDate = document.getElementById('edit-follow-up-date').value;
+    const status = document.getElementById('edit-status').value;
+    
+    const calls = JSON.parse(localStorage.getItem('mandiCalls'));
+    const callIndex = calls.findIndex(call => call.id == id);
+    
+    if (callIndex !== -1) {
+        // If we're changing the content, add the old version to history
+        let history = calls[callIndex].history || [];
+        
+        // Only add to history if something changed
+        if (calls[callIndex].conversation !== conversation || 
+            calls[callIndex].status !== status) {
+            
+            history.push({
+                callDate: new Date().toISOString(), // CHANGE HERE: Use current date/time for the history entry
+                conversation: calls[callIndex].conversation,
+                status: calls[callIndex].status
+            });
+        }
+        
+        calls[callIndex] = {
+            ...calls[callIndex],
+            callDate,
+            mandiName,
+            phoneNumber,
+            conversation,
+            followUpDate,
+            status,
+            history
+        };
+        
+        localStorage.setItem('mandiCalls', JSON.stringify(calls));
+        renderCalls();
+        editModal.style.display = 'none';
+        showNotification('Call updated successfully!');
+    }
+});
+        
+        // Render Calls
+        function renderCalls() {
+    const calls = JSON.parse(localStorage.getItem('mandiCalls'));
+    const searchText = searchInput.value.toLowerCase();
+    const statusValue = statusFilter.value;
+            
+            let filteredCalls = calls;
+            
+            // Apply search filter
+            if (searchText) {
+                filteredCalls = filteredCalls.filter(call => 
+                    call.mandiName.toLowerCase().includes(searchText) ||
+                    call.phoneNumber.includes(searchText) ||
+                    call.conversation.toLowerCase().includes(searchText)
+                );
+            }
+            
+            // Apply status filter
+            if (statusValue !== 'All') {
+                filteredCalls = filteredCalls.filter(call => call.status === statusValue);
+            }
+            
+            // Sort by call date (newest first)
+            filteredCalls.sort((a, b) => new Date(b.callDate) - new Date(a.callDate));
+            
+            callsContainer.innerHTML = '';
+            
+            filteredCalls.forEach(call => {
+                const callCard = document.createElement('div');
+                callCard.className = 'call-card';
+                callCard.style.marginBottom = '20px';
+                callCard.style.padding = '15px';
+                callCard.style.border = '1px solid #ddd';
+                callCard.style.borderRadius = '8px';
+                
+                // Check if follow-up is due
+                const isFollowUpDue = call.followUpDate && new Date(call.followUpDate) <= new Date() && call.status !== 'Closed';
+                if (isFollowUpDue) {
+                    callCard.style.backgroundColor = '#ffecb3';
+                }
+                
+                // Format dates for display
+                const callDateFormatted = formatDate(call.callDate);
+                const followUpDateFormatted = call.followUpDate ? formatDate(call.followUpDate) : 'No follow-up scheduled';
+                
+                // Add status class
+                let statusClass = '';
+                if (call.status === 'Closed') statusClass = 'status-closed';
+                if (call.status === 'Follow Up Required') statusClass = 'status-required';
+                if (call.status === 'Not Responding') statusClass = 'status-not-responding';
+                
+                // Header information
+                const headerDiv = document.createElement('div');
+                headerDiv.style.display = 'flex';
+                headerDiv.style.justifyContent = 'space-between';
+                headerDiv.style.marginBottom = '10px';
+                
+                const infoDiv = document.createElement('div');
+                infoDiv.innerHTML = `
+                    <h3 style="margin: 0">${call.mandiName}</h3>
+                    <p style="margin: 5px 0">Phone: ${call.phoneNumber}</p>
+                    <p style="margin: 5px 0">Call Date: ${callDateFormatted}</p>
+                    <p style="margin: 5px 0">Follow-up: ${followUpDateFormatted}</p>
+                    <p style="margin: 5px 0">Status: <span class="${statusClass}">${call.status}</span></p>
+                `;
+                
+                const actionsDiv = document.createElement('div');
+                const editBtn = document.createElement('button');
+                editBtn.innerText = 'Edit';
+                editBtn.className = 'edit-btn';
+                editBtn.setAttribute('data-id', call.id);
+                editBtn.addEventListener('click', editCall);
+                
+                const deleteBtn = document.createElement('button');
+                deleteBtn.innerText = 'Delete';
+                deleteBtn.className = 'delete-btn';
+                deleteBtn.style.marginTop = '10px';
+                deleteBtn.setAttribute('data-id', call.id);
+                deleteBtn.addEventListener('click', deleteCall);
+                
+                actionsDiv.appendChild(editBtn);
+                actionsDiv.appendChild(document.createElement('br'));
+                actionsDiv.appendChild(deleteBtn);
+                
+                headerDiv.appendChild(infoDiv);
+                headerDiv.appendChild(actionsDiv);
+                
+                // Conversation section
+                const conversationDiv = document.createElement('div');
+                conversationDiv.innerHTML = `
+                    <h4 style="margin: 10px 0 5px 0">Conversation:</h4>
+                    <div class="conversation-text">${call.conversation}</div>
+                `;
+                
+                // History section
+        const historyDiv = document.createElement('div');
+        if (call.history && call.history.length > 0) {
+            historyDiv.innerHTML = `
+                <h4 style="margin: 15px 0 5px 0">Previous Conversations:</h4>
+            `;
+            
+            const historyList = document.createElement('div');
+            call.history.slice().reverse().forEach(historyItem => {
+                const historyItemDiv = document.createElement('div');
+                historyItemDiv.className = 'history-item';
+                historyItemDiv.innerHTML = `
+                    <div class="history-date">
+                        ${formatDate(historyItem.callDate)} - Status: ${historyItem.status}
+                    </div>
+                    <div>${historyItem.conversation}</div>
+                `;
+                historyList.appendChild(historyItemDiv);
+            });
+            
+            historyDiv.appendChild(historyList);
+        }
+                
+                // Combine all sections
+                callCard.appendChild(headerDiv);
+                callCard.appendChild(conversationDiv);
+                if (call.history && call.history.length > 0) {
+                    callCard.appendChild(historyDiv);
+                }
+                
+                callsContainer.appendChild(callCard);
+            });
+            
+            if (filteredCalls.length === 0) {
+                callsContainer.innerHTML = '<p>No matching calls found.</p>';
+            }
+        }
+        
+        // Edit Call
+        function editCall(e) {
+    const id = e.target.getAttribute('data-id');
+    const calls = JSON.parse(localStorage.getItem('mandiCalls'));
+    const call = calls.find(call => call.id == id);
+    
+    if (call) {
+        document.getElementById('edit-id').value = call.id;
+        document.getElementById('edit-call-date').value = call.callDate;
+        document.getElementById('edit-mandi-name').value = call.mandiName;
+        document.getElementById('edit-phone-number').value = call.phoneNumber;
+        document.getElementById('edit-conversation').value = call.conversation;
+        document.getElementById('edit-follow-up-date').value = call.followUpDate || '';
+        document.getElementById('edit-status').value = call.status;
+        
+        // Render history in the edit form
+        const historyContainer = document.getElementById('edit-history');
+        historyContainer.innerHTML = '';
+        
+        if (call.history && call.history.length > 0) {
+            call.history.slice().reverse().forEach(historyItem => {
+                const historyItemDiv = document.createElement('div');
+                historyItemDiv.className = 'history-item';
+                historyItemDiv.innerHTML = `
+                    <div class="history-date">
+                        ${formatDate(historyItem.callDate)} - Status: ${historyItem.status}
+                    </div>
+                    <div>${historyItem.conversation}</div>
+                `;
+                historyContainer.appendChild(historyItemDiv);
+            });
+        } else {
+            historyContainer.innerHTML = '<p>No previous conversations.</p>';
+        }
+        
+        editModal.style.display = 'block';
+    }
+}
+        
+        // Delete Call
+        function deleteCall(e) {
+            if (confirm('Are you sure you want to delete this call record?')) {
+                const id = e.target.getAttribute('data-id');
+                const calls = JSON.parse(localStorage.getItem('mandiCalls'));
+                const updatedCalls = calls.filter(call => call.id != id);
+                
+                localStorage.setItem('mandiCalls', JSON.stringify(updatedCalls));
+                renderCalls();
+                showNotification('Call deleted successfully!');
+            }
+        }
+        
+        // Check for reminders
+        function checkReminders(forceDisplay = false) {
+            const calls = JSON.parse(localStorage.getItem('mandiCalls'));
+            const now = new Date();
+            let hasReminders = false;
+            
+            reminderList.innerHTML = '';
+            
+            // Sort by follow-up date (soonest first)
+            const sortedCalls = [...calls]
+                .filter(call => call.followUpDate && call.status !== 'Closed')
+                .sort((a, b) => new Date(a.followUpDate) - new Date(b.followUpDate));
+            
+            sortedCalls.forEach(call => {
+                const followUpDate = new Date(call.followUpDate);
+                const isFollowUpDue = followUpDate <= now;
+                
+                const row = document.createElement('tr');
+                
+                if (isFollowUpDue) {
+                    row.style.backgroundColor = '#ffecb3';
+                    hasReminders = true;
+                    
+                    // Show notification for follow-up reminders
+                    if (!call.reminderShown && !forceDisplay) {
+                        showNotification(`Follow-up due for: ${call.mandiName} (${call.phoneNumber})`);
+                        
+                        // Mark as shown
+                        call.reminderShown = true;
+                        localStorage.setItem('mandiCalls', JSON.stringify(calls));
+                    }
+                }
+                
+                row.innerHTML = `
+                    <td>${call.mandiName}</td>
+                    <td>${call.phoneNumber}</td>
+                    <td>${formatDate(call.followUpDate)}</td>
+                    <td>${call.status}</td>
+                    <td>${truncateText(call.conversation, 50)}</td>
+                    <td>
+                        <button class="edit-btn" data-id="${call.id}">Edit</button>
+                        <button class="mark-complete-btn" data-id="${call.id}">Mark Complete</button>
+                    </td>
+                `;
+                
+                reminderList.appendChild(row);
+            });
+            
+            if (sortedCalls.length === 0) {
+                const emptyRow = document.createElement('tr');
+                emptyRow.innerHTML = '<td colspan="6" style="text-align: center;">No follow-ups scheduled.</td>';
+                reminderList.appendChild(emptyRow);
+            }
+            
+            // Add event listeners
+            document.querySelectorAll('.mark-complete-btn').forEach(btn => {
+                btn.addEventListener('click', markAsComplete);
+            });
+            
+            document.querySelectorAll('#reminder-list .edit-btn').forEach(btn => {
+                btn.addEventListener('click', editCall);
+            });
+            
+            return hasReminders;
+        }
+        
+        // Mark as complete
+        function markAsComplete(e) {
+    const id = e.target.getAttribute('data-id');
+    const calls = JSON.parse(localStorage.getItem('mandiCalls'));
+    const callIndex = calls.findIndex(call => call.id == id);
+    
+    if (callIndex !== -1) {
+        // Add current state to history before changing
+        let history = calls[callIndex].history || [];
+        history.push({
+            callDate: new Date().toISOString(), // CHANGE HERE: Use current date/time for the history entry
+            conversation: calls[callIndex].conversation,
+            status: calls[callIndex].status
+        });
+        
+        // Update the status
+        calls[callIndex].status = 'Closed';
+        calls[callIndex].history = history;
+        
+        localStorage.setItem('mandiCalls', JSON.stringify(calls));
+        checkReminders(true);
+        showNotification('Call marked as complete!');
+    }
+}
+        
+        // Make sure the formatDate function can handle ISO strings properly
+function formatDate(dateString) {
+    // Make sure we have a valid date to work with
+    if (!dateString) return 'Unknown date';
+    
+    try {
+        const date = new Date(dateString);
+        
+        // Check if date is valid
+        if (isNaN(date.getTime())) {
+            return dateString; // Return the original string if invalid date
+        }
+        
+        return new Intl.DateTimeFormat('en-US', {
+            year: 'numeric',
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        }).format(date);
+    } catch (e) {
+        console.error("Error formatting date:", e);
+        return dateString; // Return original if there's an error
+    }
+}
+        
+        function truncateText(text, maxLength) {
+            if (text.length > maxLength) {
+                return text.substring(0, maxLength) + '...';
+            }
+            return text;
+        }
+        
+        function showNotification(message) {
+            notification.textContent = message;
+            notification.style.display = 'block';
+            
+            setTimeout(() => {
+                notification.style.display = 'none';
+            }, 3000);
+        }
+        
+// Export functions
+function exportToCSV() {
+            const calls = JSON.parse(localStorage.getItem('mandiCalls'));
+            if (calls.length === 0) {
+                showNotification('No data to export');
+                return;
+            }
+            
+            const headers = ['Call Date', 'Mandi Name', 'Phone Number', 'Conversation', 'Follow-up Date', 'Status'];
+            let csvContent = headers.join(',') + '\n';
+            
+            calls.forEach(call => {
+                // Escape quotes in conversation text
+                const escapedConversation = call.conversation.replace(/"/g, '""');
+                
+                const row = [
+                    call.callDate,
+                    call.mandiName,
+                    call.phoneNumber,
+                    `"${escapedConversation}"`, // Wrap conversation in quotes to handle commas
+                    call.followUpDate || '',
+                    call.status
+                ];
+                
+                csvContent += row.join(',') + '\n';
+            });
+            
+            downloadFile(csvContent, 'mandi-calls.csv', 'text/csv');
+        }
+        
+        function exportToJSON() {
+            const calls = JSON.parse(localStorage.getItem('mandiCalls'));
+            if (calls.length === 0) {
+                showNotification('No data to export');
+                return;
+            }
+            
+            const jsonContent = JSON.stringify(calls, null, 2);
+            downloadFile(jsonContent, 'mandi-calls.json', 'application/json');
+        }
+        
+        function downloadFile(content, fileName, contentType) {
+            const blob = new Blob([content], { type: contentType });
+            const url = URL.createObjectURL(blob);
+            
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            a.click();
+            
+            URL.revokeObjectURL(url);
+        }
+        
+        // Import function
+        function importData(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            
+            reader.onload = function(event) {
+                try {
+                    let importedData;
+                    
+                    if (file.name.endsWith('.json')) {
+                        importedData = JSON.parse(event.target.result);
+                    } else if (file.name.endsWith('.csv')) {
+                        importedData = parseCSV(event.target.result);
+                    } else {
+                        throw new Error('Unsupported file format');
+                    }
+                    
+                    if (confirm(`Import ${importedData.length} call records? This will replace your existing data.`)) {
+                        localStorage.setItem('mandiCalls', JSON.stringify(importedData));
+                        renderCalls();
+                        checkReminders(true);
+                        showNotification('Data imported successfully!');
+                    }
+                } catch (error) {
+                    showNotification('Error importing data: ' + error.message);
+                }
+                
+                // Reset file input
+                e.target.value = '';
+            };
+            
+            if (file.name.endsWith('.json')) {
+                reader.readAsText(file);
+            } else if (file.name.endsWith('.csv')) {
+                reader.readAsText(file);
+            } else {
+                showNotification('Please select a .json or .csv file');
+                e.target.value = '';
+            }
+        }
+        
+        function parseCSV(csv) {
+            const lines = csv.split('\n');
+            const headers = lines[0].split(',');
+            const result = [];
+            
+            for (let i = 1; i < lines.length; i++) {
+                if (!lines[i].trim()) continue;
+                
+                // Handle quoted fields with commas
+                const values = [];
+                let inQuotes = false;
+                let currentValue = '';
+                
+                for (let j = 0; j < lines[i].length; j++) {
+                    const char = lines[i][j];
+                    
+                    if (char === '"') {
+                        inQuotes = !inQuotes;
+                    } else if (char === ',' && !inQuotes) {
+                        values.push(currentValue);
+                        currentValue = '';
+                    } else {
+                        currentValue += char;
+                    }
+                }
+                
+                values.push(currentValue); // Add the last value
+                
+                const call = {
+                    id: Date.now() + i, // Generate unique ID
+                    callDate: values[0],
+                    mandiName: values[1],
+                    phoneNumber: values[2],
+                    conversation: values[3].replace(/^"|"$/g, ''), // Remove surrounding quotes
+                    followUpDate: values[4],
+                    status: values[5],
+                    reminderShown: false
+                };
+                
+                result.push(call);
+            }
+            
+            return result;
+        }
+        
+        // Initialize
+        window.addEventListener('load', () => {
+            // Set default call date to current date and time
+            const now = new Date();
+            const formattedDate = now.toISOString().slice(0, 16);
+            document.getElementById('call-date').value = formattedDate;
+            
+            // Check for reminders every minute
+            checkReminders();
+            setInterval(checkReminders, 60000);
+        });
+    </script>
+</body>
+</html>
