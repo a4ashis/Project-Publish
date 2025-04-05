@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The Scent of Rain: Unearthing the Earthy Aroma</title>
+    <style>
+        /* Google Font Import */
+        @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap');
+
+        /* CSS Variables */
+        :root {
+            --color-earth-dark: #5a3e2b;
+            --color-earth-medium: #8b5e3c;
+            --color-earth-light: #c6a68d;
+            --color-green-dark: #2e4d1e;
+            --color-green-light: #6a8a53;
+            --color-blue-sky: #a8d0e6;
+            --color-blue-water: #378ba4;
+            --color-text: #333333;
+            --color-white: #ffffff;
+            --font-heading: 'Montserrat', sans-serif;
+            --font-body: 'Lora', serif;
+        }
+
+        /* Basic Reset */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font-body);
+            line-height: 1.7;
+            color: var(--color-text);
+            background: linear-gradient(135deg, var(--color-blue-sky) 0%, var(--color-green-light) 50%, var(--color-earth-light) 100%);
+            background-attachment: fixed;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        /* Typography */
+        h1, h2, h3 {
+            font-family: var(--font-heading);
+            color: var(--color-green-dark);
+            margin-bottom: 0.8em;
+            line-height: 1.3;
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            text-align: center;
+            text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            font-size: 1.8rem;
+            border-bottom: 2px solid var(--color-green-light);
+            padding-bottom: 0.3em;
+            margin-top: 1.5em;
+        }
+
+        h3 {
+            font-size: 1.3rem;
+            color: var(--color-earth-dark);
+        }
+
+        p {
+            margin-bottom: 1em;
+        }
+
+        a {
+            color: var(--color-blue-water);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover, a:focus {
+            color: var(--color-earth-dark);
+            text-decoration: underline;
+        }
+
+        /* Layout */
+        .container {
+            max-width: 900px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: rgba(255, 255, 255, 0.85);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            flex-grow: 1; /* Makes container take available space */
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 2em;
+            padding: 1em 0;
+            border-bottom: 1px dashed var(--color-earth-medium);
+        }
+
+        header p {
+            font-size: 1.1em;
+            font-style: italic;
+            color: var(--color-earth-medium);
+        }
+
+        section {
+            margin-bottom: 2.5em;
+        }
+
+        /* Flexbox for Icon + Text layout */
+        .icon-text-wrapper {
+            display: flex;
+            align-items: flex-start; /* Align items to the top */
+            gap: 20px; /* Space between icon and text */
+            margin-bottom: 1.5em;
+        }
+
+        .icon-container {
+            flex-shrink: 0; /* Prevent icon from shrinking */
+            width: 60px; /* Fixed width for icon container */
+            height: 60px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .icon-container svg {
+            width: 100%;
+            height: auto;
+            max-height: 60px; /* Ensure icon doesn't exceed container height */
+            fill: var(--color-green-dark);
+        }
+         .icon-container.molecule svg {
+            fill: var(--color-blue-water);
+         }
+         .icon-container.droplet svg {
+            fill: var(--color-blue-water);
+         }
+         .icon-container.leaf svg {
+             fill: var(--color-green-dark);
+         }
+
+        .text-content {
+            flex-grow: 1; /* Allow text content to take remaining space */
+        }
+
+        /* Fun Fact Callout */
+        .fun-fact {
+            background-color: var(--color-earth-light);
+            border: 2px solid var(--color-earth-medium);
+            border-left: 5px solid var(--color-earth-dark);
+            padding: 1.5em;
+            margin: 2em 0;
+            border-radius: 5px;
+            box-shadow: 2px 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .fun-fact h3 {
+            margin-top: 0;
+            margin-bottom: 0.5em;
+            color: var(--color-earth-dark);
+        }
+
+        /* Interactive Element */
+        #interactive-section {
+            text-align: center;
+            margin-top: 2em;
+        }
+
+        .smell-button {
+            background: linear-gradient(135deg, var(--color-green-dark), var(--color-green-light));
+            color: var(--color-white);
+            font-family: var(--font-heading);
+            font-size: 1.1rem;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: inline-block; /* Needed for transform */
+        }
+
+        .smell-button:hover, .smell-button:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        #smell-animation-container {
+            margin-top: 20px;
+            height: 50px; /* Reserve space */
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Simple "aroma" particle animation */
+        .aroma-particle {
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            width: 8px;
+            height: 12px;
+            background-color: var(--color-earth-medium);
+            border-radius: 50% 50% 50% 50% / 60% 60% 40% 40% ; /* Teardrop-like */
+            opacity: 0;
+            animation: rise 2s ease-out forwards;
+            transform-origin: bottom center;
+        }
+
+        @keyframes rise {
+            0% {
+                transform: translate(-50%, 0) scale(0.5);
+                opacity: 0.8;
+            }
+            100% {
+                transform: translate(-50%, -50px) scale(1);
+                opacity: 0;
+            }
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 1.5em 0;
+            margin-top: 2em;
+            background-color: var(--color-earth-dark);
+            color: var(--color-earth-light);
+            font-size: 0.9em;
+        }
+
+        footer p {
+            margin-bottom: 0.5em;
+        }
+
+        footer a {
+            color: var(--color-blue-sky);
+        }
+        footer a:hover {
+            color: var(--color-white);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+            h2 {
+                font-size: 1.5rem;
+            }
+            .container {
+                margin: 10px;
+                padding: 15px;
+            }
+            .icon-text-wrapper {
+                flex-direction: column; /* Stack icon and text on mobile */
+                align-items: center; /* Center items when stacked */
+                text-align: center;
+                gap: 10px;
+            }
+            .icon-container {
+                margin-bottom: 0.5em;
+                width: 50px; /* Slightly smaller icon */
+                 height: 50px;
+            }
+             .icon-container svg {
+                 max-height: 50px;
+             }
+        }
+
+        @media (max-width: 480px) {
+             h1 {
+                font-size: 1.8rem;
+            }
+            body {
+                font-size: 15px; /* Adjust base font size */
+            }
+            .smell-button {
+                font-size: 1rem;
+                padding: 10px 20px;
+            }
+        }
+
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <header>
+            <h1>Why Wet Soil Smells So Good</h1>
+            <p>Unearthing the Science Behind Petrichor's Earthy Aroma</p>
+        </header>
+
+        <main>
+            <section id="intro">
+                <h2>That Fresh Earth Scent</h2>
+                <p>Almost everyone recognizes the pleasant, earthy smell that fills the air after a light spring rain or when digging in a garden. This distinctive scent, often called 'petrichor', isn't just from the water itself. It's a complex blend of compounds, with a major contribution coming from tiny organisms living right beneath our feet.</p>
+            </section>
+
+            <section id="microbes">
+                <h2>The Microbial Perfumers: Streptomyces</h2>
+                 <div class="icon-text-wrapper">
+                    <div class="icon-container">
+                        <!-- Embedded SVG for Bacteria -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                          <path d="M50,10 C77.6,10 100,32.4 100,60 C100,87.6 77.6,110 50,110 C22.4,110 0,87.6 0,60 C0,32.4 22.4,10 50,10 Z M50,20 C27.9,20 10,37.9 10,60 C10,82.1 27.9,100 50,100 C72.1,100 90,82.1 90,60 C90,37.9 72.1,20 50,20 Z" transform="translate(0, -15)" fill="#6a8a53"/>
+                          <path d="M25,50 Q30,40 40,45 T60,40 T75,50" stroke="#2e4d1e" stroke-width="3" fill="none" stroke-linecap="round"/>
+                          <path d="M28,60 Q35,55 45,58 T65,55 T72,60" stroke="#2e4d1e" stroke-width="3" fill="none" stroke-linecap="round"/>
+                          <path d="M30,70 Q38,68 48,71 T68,68 T70,70" stroke="#2e4d1e" stroke-width="3" fill="none" stroke-linecap="round"/>
+                          <!-- Simple flagella-like structures -->
+                          <line x1="15" y1="45" x2="5" y2="40" stroke="#2e4d1e" stroke-width="2" stroke-linecap="round"/>
+                          <line x1="18" y1="55" x2="8" y2="58" stroke="#2e4d1e" stroke-width="2" stroke-linecap="round"/>
+                           <line x1="85" y1="45" x2="95" y2="40" stroke="#2e4d1e" stroke-width="2" stroke-linecap="round"/>
+                          <line x1="82" y1="55" x2="92" y2="58" stroke="#2e4d1e" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                    </div>
+                    <div class="text-content">
+                        <p>The primary culprits behind the characteristic earthy smell are bacteria belonging to the genus <strong>Streptomyces</strong>. These filamentous bacteria are incredibly common in healthy soils worldwide. They thrive in damp conditions and play a crucial role in decomposing organic matter.</p>
+                        <p>As part of their life cycle, especially when they form spores, Streptomyces produce volatile organic compounds (VOCs). When raindrops hit dry soil, they aerosolize these compounds, releasing them into the air for us to smell.</p>
+                     </div>
+                 </div>
+            </section>
+
+            <section id="chemistry">
+                <h2>The Aromatic Molecules: Geosmin & 2-MIB</h2>
+                 <div class="icon-text-wrapper">
+                     <div class="icon-container molecule">
+                         <!-- Embedded SVG for a generic molecule representation -->
+                        <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+                          <circle cx="50" cy="50" r="10" fill="#378ba4"/>
+                          <circle cx="30" cy="35" r="8" fill="#5a3e2b"/>
+                          <circle cx="70" cy="35" r="8" fill="#5a3e2b"/>
+                          <circle cx="30" cy="65" r="8" fill="#5a3e2b"/>
+                          <circle cx="70" cy="65" r="8" fill="#5a3e2b"/>
+                          <circle cx="50" cy="20" r="7" fill="#c6a68d"/>
+                           <circle cx="50" cy="80" r="7" fill="#c6a68d"/>
+                          <line x1="50" y1="50" x2="30" y2="35" stroke="#8b5e3c" stroke-width="3"/>
+                          <line x1="50" y1="50" x2="70" y2="35" stroke="#8b5e3c" stroke-width="3"/>
+                          <line x1="50" y1="50" x2="30" y2="65" stroke="#8b5e3c" stroke-width="3"/>
+                          <line x1="50" y1="50" x2="70" y2="65" stroke="#8b5e3c" stroke-width="3"/>
+                           <line x1="50" y1="50" x2="50" y2="20" stroke="#8b5e3c" stroke-width="3"/>
+                           <line x1="50" y1="50" x2="50" y2="80" stroke="#8b5e3c" stroke-width="3"/>
+                        </svg>
+                     </div>
+                      <div class="text-content">
+                        <p>Two key compounds produced by Streptomyces (and some cyanobacteria and fungi) are responsible for the signature scent:</p>
+                        <ul>
+                            <li><strong>Geosmin:</strong> (Greek for "earth smell") This bicyclic alcohol has an intensely earthy, musty odor. It's the dominant contributor to the smell we associate with freshly tilled soil or beetroot.</li>
+                            <li><strong>2-Methylisoborneol (2-MIB):</strong> This compound contributes a similar earthy, camphor-like, musty note. Often found alongside geosmin, it adds complexity to the overall aroma.</li>
+                        </ul>
+                        <p>Humans are extraordinarily sensitive to these compounds, able to detect geosmin at concentrations as low as a few parts per trillion!</p>
+                      </div>
+                </div>
+            </section>
+
+            <aside class="fun-fact">
+                <h3>Fun Fact: Survival Smell?</h3>
+                <p>Why are we so sensitive to geosmin? One theory suggests that for our ancestors, the smell of geosmin indicated the presence of fresh water, a vital resource, especially in arid environments. The scent signaled recent rainfall and potentially drinkable water sources.</p>
+            </aside>
+
+            <section id="ecology">
+                <h2>Ecological Significance</h2>
+                 <div class="icon-text-wrapper">
+                     <div class="icon-container leaf">
+                          <!-- Embedded SVG for Leaf/Ecology -->
+                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                           <path d="M50,95 C80,80 95,50 90,20 C85,-10 50,0 50,0 C50,0 15,-10 10,20 C5,50 20,80 50,95 Z" fill="#6a8a53"/>
+                           <path d="M50,90 V 0" stroke="#2e4d1e" stroke-width="3"/>
+                           <path d="M50,70 Q 65,65 75,50" stroke="#2e4d1e" stroke-width="3" fill="none"/>
+                           <path d="M50,50 Q 60,45 70,30" stroke="#2e4d1e" stroke-width="3" fill="none"/>
+                            <path d="M50,70 Q 35,65 25,50" stroke="#2e4d1e" stroke-width="3" fill="none"/>
+                           <path d="M50,50 Q 40,45 30,30" stroke="#2e4d1e" stroke-width="3" fill="none"/>
+                         </svg>
+                     </div>
+                      <div class="text-content">
+                        <p>The production of geosmin and 2-MIB isn't just for our olfactory pleasure. It serves ecological purposes:</p>
+                        <ul>
+                            <li><strong>Signaling Spore Dispersal:</strong> The scent attracts certain soil-dwelling arthropods, like springtails. These tiny creatures consume the Streptomyces bacteria and inadvertently help disperse their spores to new locations as they travel through the soil or are carried by wind/water.</li>
+                            <li><strong>Indicator of Soil Health:</strong> The presence of these compounds indicates active microbial decomposition, a key part of nutrient cycling in healthy ecosystems. Streptomyces help break down complex organic matter, making nutrients available for plants.</li>
+                            <li><strong>Potential Defense:</strong> While attractive to some organisms, geosmin might repel others, potentially protecting the bacteria from certain predators or competitors.</li>
+                        </ul>
+                      </div>
+                </div>
+            </section>
+
+             <section id="interactive-section">
+                <h2>Experience the Science</h2>
+                 <div class="icon-text-wrapper">
+                    <div class="icon-container droplet">
+                         <!-- Embedded SVG for Water Droplet -->
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+                          <path d="M50,5 C25,35 25,65 50,95 C75,65 75,35 50,5 Z" fill="#a8d0e6"/>
+                          <path d="M50,10 C30,40 30,65 50,90 C70,65 70,40 50,10 Z" fill="#378ba4"/>
+                           <!-- Highlight -->
+                          <path d="M45,25 Q 50,15 60,20 A 20 20 0 0 1 55 45 Q 50 35 45 25 Z" fill="#ffffff" opacity="0.7"/>
+                        </svg>
+                     </div>
+                     <div class="text-content" style="text-align: center;"> <!-- Centered text for this specific section -->
+                        <p>While we can't bottle the actual scent here, click the button below to visualize the release of these amazing molecules!</p>
+                        <button id="smellButton" class="smell-button">"Smell" the Science!</button>
+                        <div id="smell-animation-container">
+                            <!-- Particles will be added here by JS -->
+                        </div>
+                        <p id="smell-message" style="min-height: 1.2em; margin-top: 10px; font-style: italic; color: var(--color-earth-medium);"></p>
+                     </div>
+                 </div>
+            </section>
+
+        </main>
+
+        <footer>
+            <p>References & Further Reading:</p>
+            <p>
+                <a href="https://www.nature.com/articles/nmicrobiol201525" target="_blank" rel="noopener noreferrer">Becher, P.G., et al. (2020). Developmentally regulated volatiles geosmin and 2-methylisoborneol attract Drosophila melanogaster. Nature Chemical Biology.</a> (Illustrates arthropod attraction)
+            </p>
+             <p>
+                <a href="https://aem.asm.org/content/69/12/7175" target="_blank" rel="noopener noreferrer">Gerber, N. N., & Lechevalier, H. A. (1965). Geosmin, an earthy-smelling substance isolated from actinomycetes. Applied microbiology.</a> (Classic paper identifying Geosmin)
+            </p>
+             <p>
+                <a href="https://www.nature.com/articles/ncomms7083" target="_blank" rel="noopener noreferrer">Jouett, J.Y., et al. (2015). Aerosol generation by raindrop impact on soil. Nature Communications.</a> (Explains the aerosolization mechanism)
+            </p>
+            <p style="margin-top: 1.5em; font-size: 0.8em;">&copy; 2023 - Created for Educational Purposes</p>
+        </footer>
+    </div>
+
+    <script>
+        // Keep JavaScript minimal and inline
+        document.addEventListener('DOMContentLoaded', () => {
+            const smellButton = document.getElementById('smellButton');
+            const animationContainer = document.getElementById('smell-animation-container');
+            const smellMessage = document.getElementById('smell-message');
+            let isAnimating = false; // Prevent spamming animations
+
+            smellButton.addEventListener('click', () => {
+                if (isAnimating) return; // Don't run if already animating
+
+                isAnimating = true;
+                smellMessage.textContent = 'Visualizing aroma release...';
+
+                // Create a few "particles"
+                for (let i = 0; i < 5; i++) {
+                    const particle = document.createElement('div');
+                    particle.classList.add('aroma-particle');
+                    // Randomize horizontal start slightly and delay
+                    particle.style.left = `${45 + Math.random() * 10}%`;
+                    particle.style.animationDelay = `${Math.random() * 0.5}s`;
+                    // Randomize color slightly between earthy tones
+                    const colors = ['var(--color-earth-medium)', 'var(--color-earth-dark)', 'var(--color-green-light)'];
+                    particle.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+
+                    animationContainer.appendChild(particle);
+
+                    // Remove particle after animation ends
+                    particle.addEventListener('animationend', () => {
+                        particle.remove();
+                    });
+                }
+
+                // Reset after animation duration + buffer
+                setTimeout(() => {
+                    isAnimating = false;
+                     smellMessage.textContent = 'That\'s the scent of geosmin & 2-MIB!';
+                     // Optionally clear the message after a while
+                     setTimeout(() => { smellMessage.textContent = ''; }, 3000);
+                }, 2500); // Match longest animation time + buffer
+            });
+        });
+    </script>
+
+</body>
+</html>
