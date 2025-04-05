@@ -3,31 +3,35 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ashis's Blog - Vibrant Musings</title> <!-- Updated title -->
+    <title>Ashis's Blog - Dynamic Filtering</title> <!-- Updated title -->
 
-    <!-- Google Fonts for Elegance -->
+    <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400&display=swap" rel="stylesheet">
 
     <style>
-        /* CSS - Vibrant Animated Surreal Theme */
+        /* CSS - Dynamic Filtering, Side Menus, Swatches */
         :root {
-            /* Vibrant Palette */
-            --bg-color-start: #ff3cac; /* Bright Pink */
-            --bg-color-mid1: #784ba0; /* Purple */
-            --bg-color-mid2: #2b86c5; /* Bright Blue */
-            --bg-color-end: #ffdd00;  /* Yellow/Gold */
+            /* Vibrant Palette (Defaults) */
+            --bg-color-start: #ff3cac;
+            --bg-color-mid1: #784ba0;
+            --bg-color-mid2: #2b86c5;
+            --bg-color-end: #ffdd00;
 
-            /* Text Colors for Readability on Vibrant BG */
-            --text-color: #1a1a1e; /* Very Dark Blue/Almost Black for primary text */
-            --secondary-text: #4a4a52; /* Dark Grey for less important text */
-            --accent-color: #000000; /* Black for strong accent */
-            --subtle-bg: rgba(255, 255, 255, 0.6); /* Semi-transparent white for readability */
-            --border-color: rgba(0, 0, 0, 0.2); /* Subtle dark border */
+            /* Text Colors */
+            --text-color: #1a1a1e;
+            --secondary-text: #4a4a52;
+            --accent-color: #000000;
+            --subtle-bg: rgba(255, 255, 255, 0.70);
+            --menu-bg: rgba(255, 255, 255, 0.97);
+            --border-color: rgba(0, 0, 0, 0.15);
 
             --header-font: 'Playfair Display', serif;
             --body-font: 'Lato', sans-serif;
+
+            /* Animation Duration Variable */
+            --animation-duration: 18s;
         }
 
         *, *::before, *::after {
@@ -40,431 +44,301 @@
             color: var(--text-color);
             font-family: var(--body-font);
             line-height: 1.7;
-            font-weight: 400; /* Normal weight often reads better on bright BGs */
-            /* Animated Vibrant Gradient Background */
-            background: linear-gradient(-45deg, var(--bg-color-start), var(--bg-color-mid1), var(--bg-color-mid2), var(--bg-color-end));
+            font-weight: 400;
+            background: linear-gradient(-45deg,
+                var(--bg-color-start),
+                var(--bg-color-mid1),
+                var(--bg-color-mid2),
+                var(--bg-color-end)
+            );
             background-size: 400% 400%;
-            animation: vibrant-gradient 18s ease infinite;
-            min-height: 100vh; /* Ensure gradient covers full height */
+            animation: vibrant-gradient var(--animation-duration) ease infinite;
+            min-height: 100vh;
         }
 
         @keyframes vibrant-gradient {
-            0% {
-                background-position: 0% 50%;
-            }
-            50% {
-                background-position: 100% 50%;
-            }
-            100% {
-                background-position: 0% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         .container {
-            display: flex;
-            flex-wrap: wrap; /* Allow sidebar to wrap on small screens if needed */
-            gap: 2em;
-            max-width: 1200px;
-            margin: 2em auto;
-            padding: 1em;
-            /* Add a subtle background to the container itself for content focus */
-            background-color: rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            display: flex; flex-wrap: wrap; gap: 2em; max-width: 1200px;
+            margin: 2em auto; padding: 1.5em; background-color: rgba(255, 255, 255, 0.15);
+            border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
         /* Header */
         .site-header {
-            width: 100%;
-            text-align: center;
-            margin-bottom: 2em;
-            padding: 1em 0;
-            border-bottom: 1px solid var(--border-color);
+            width: 100%; text-align: center; margin-bottom: 2em; padding: 1em 0;
+            border-bottom: 1px solid var(--border-color); background-color: rgba(255, 255, 255, 0.1);
         }
-
         .site-header h1 {
-            font-family: var(--header-font);
-            font-size: 2.8em;
-            font-weight: 700;
-            color: var(--text-color); /* Dark text */
-            letter-spacing: 1px;
-            margin-bottom: 0.2em;
+            font-family: var(--header-font); font-size: 2.8em; font-weight: 700;
+            color: var(--text-color); letter-spacing: 1px; margin-bottom: 0.2em;
         }
-
-        .site-header .tagline {
-            font-size: 1.1em;
-            color: var(--secondary-text); /* Dark grey */
-            font-style: italic;
-            font-weight: 300;
-        }
+        .site-header .tagline { font-size: 1.1em; color: var(--text-color); font-style: italic; font-weight: 400; }
 
         /* Sidebar / Navigation */
-        .sidebar {
-            flex: 1 0 250px; /* Takes space, minimum 250px */
-            padding-right: 1.5em; /* Space before content */
-            /* Optional: Remove border if container background provides enough separation */
-            /* border-right: 1px solid var(--border-color); */
-        }
-
+        .sidebar { flex: 1 0 250px; padding-right: 1.5em; }
+        .nav-section { margin-bottom: 0.5em; position: relative; } /* Needs position relative */
         .nav-section h2 {
-            font-family: var(--header-font);
-            font-size: 1.5em;
-            font-weight: 600;
-            color: var(--accent-color); /* Black for focus */
-            margin-bottom: 0.8em;
-            cursor: pointer;
-            position: relative;
-            padding-right: 20px;
-            transition: color 0.3s ease;
+            font-family: var(--header-font); font-size: 1.5em; font-weight: 600;
+            color: var(--accent-color); margin-bottom: 0.5em; padding-right: 0;
+            position: relative; /* Needed for child absolute positioning */
         }
-         .nav-section h2:hover {
-            color: #444; /* Slightly lighter black */
+         .nav-section h2:not(.theme-controls h2)::after { content: none; }
+
+        /* --- Hover Menu Styling (Main List) --- */
+        .nav-list { /* Targets main list appearing on section hover */
+            list-style: none; padding: 0.5em 0; margin: 0; position: absolute;
+            /* --- NEW POSITIONING: Beside H2 --- */
+            top: 0;          /* Align with top of H2's line box */
+            left: 100%;      /* Position to the right of the H2's container (.nav-section) */
+            margin-left: 10px; /* Add space */
+            /* --- END POSITIONING CHANGE --- */
+            width: 200px; background-color: var(--menu-bg);
+            border: 1px solid var(--border-color); border-radius: 4px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1); z-index: 10;
+            opacity: 0; visibility: hidden;
+            transform: translateX(10px); /* Animate horizontally */
+            transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+        }
+        /* Show main list on hover over the section */
+        .nav-section:hover > .nav-list {
+            opacity: 1; visibility: visible;
+            transform: translateX(0); /* Bring into view horizontally */
+        }
+
+        /* Styling for items within the main nav list */
+        .nav-list li.nav-item { margin: 0; position: relative; } /* For submenu */
+        .nav-list li a {
+            color: var(--secondary-text); text-decoration: none; display: block;
+            padding: 0.6em 1em; font-weight: 400;
+            transition: background-color 0.2s ease, color 0.2s ease; white-space: nowrap;
+        }
+        .nav-list li a:hover { background-color: rgba(0,0,0,0.05); color: var(--accent-color); }
+        .nav-list span.post-count {
+             float: right; color: var(--secondary-text); font-size: 0.9em; padding-left: 10px;
+        }
+
+
+        /* --- Submenu Styling (Beside Nav Item) --- */
+        .submenu {
+            list-style: none; padding: 0.5em 0; margin: 0; position: absolute;
+            top: 0; left: 100%; /* Position beside parent li.nav-item */
+            width: 220px; background-color: var(--menu-bg);
+            border: 1px solid var(--border-color); border-radius: 4px;
+            box-shadow: 2px 2px 8px rgba(0,0,0,0.1); z-index: 11;
+            opacity: 0; visibility: hidden; transform: translateX(10px);
+            transition: opacity 0.2s ease, visibility 0.2s ease, transform 0.2s ease;
+        }
+        /* Show submenu on hover over parent li.nav-item */
+        li.nav-item:hover > .submenu { opacity: 1; visibility: visible; transform: translateX(0); }
+        .submenu li a {
+            color: var(--secondary-text); text-decoration: none; display: block;
+            padding: 0.5em 1em; font-size: 0.95em; font-weight: 400;
+            transition: background-color 0.2s ease, color 0.2s ease; white-space: nowrap;
+        }
+        .submenu li a:hover { background-color: rgba(0,0,0,0.05); color: var(--accent-color); }
+
+
+        /* --- Style for Active Filter Link --- */
+         .nav-list a.active {
+            font-weight: 700; /* Make active filter bold */
+            color: var(--accent-color); /* Use accent color */
+            background-color: rgba(0,0,0,0.08); /* Slight background */
+         }
+         /* Ensure hover styles override active styles visually */
+         .nav-list a.active:hover {
+             background-color: rgba(0,0,0,0.1); /* Slightly darker hover for active */
          }
 
-        /* Dropdown Arrow Indicator */
-         .nav-section h2::after {
-            content: '▼';
-            position: absolute;
-            right: 0;
-            top: 50%;
-            transform: translateY(-50%);
-            font-size: 0.7em;
-            color: var(--secondary-text); /* Dark grey arrow */
-            transition: transform 0.3s ease;
-         }
-         .nav-section h2.active::after {
-             transform: translateY(-50%) rotate(180deg);
-         }
 
+        /* --- Theme Controls Styles --- */
+        .theme-controls { margin-top: 2em; position: static; }
+        .theme-controls h2 { cursor: default; margin-bottom: 0.6em; }
+        .theme-controls label { display: block; margin-bottom: 0.3em; font-size: 0.9em; color: var(--secondary-text); font-weight: 400; }
+        .theme-controls .control-group { margin-bottom: 1em; display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+        .theme-controls .control-group label { margin-bottom: 0; flex-basis: 50px; flex-shrink: 0; }
+        .theme-controls .swatch-container { display: flex; flex-wrap: wrap; gap: 5px; }
+        .theme-controls .swatch { width: 25px; height: 25px; border: 1px solid var(--border-color); border-radius: 4px; cursor: pointer; padding: 0; transition: transform 0.1s ease, box-shadow 0.1s ease; }
+        .theme-controls .swatch:hover { transform: scale(1.1); }
+        .theme-controls .swatch.active { border-width: 2px; border-color: var(--accent-color); box-shadow: 0 0 5px rgba(0,0,0,0.3); transform: scale(1.1); }
+        .theme-controls input[type="range"] { width: 100%; cursor: pointer; margin-top: 0.2em; }
+        .theme-controls .speed-control { margin-top: 1em;}
 
-        .nav-list {
-            list-style: none;
-            padding-left: 0.5em;
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.4s ease-out;
-        }
-
-        .nav-list.show {
-             max-height: 500px;
-             margin-bottom: 1.5em;
-        }
-
-        .nav-list li {
-            margin-bottom: 0.5em;
-        }
-
-        /* Sidebar Navigation Links */
-        .nav-list a {
-            color: var(--secondary-text); /* Use the dark grey */
-            text-decoration: none; /* Keep no underline here */
-            transition: color 0.3s ease, padding-left 0.3s ease;
-            display: block;
-            font-weight: 400;
-        }
-
-        .nav-list a:hover {
-            color: var(--accent-color); /* Black on hover */
-            padding-left: 5px;
-        }
 
         /* Main Content Area */
-        .content {
-            flex: 3 1 600px; /* Takes more space, minimum 600px */
-        }
+        .content { flex: 3 1 600px; }
+        .content h2 { font-family: var(--header-font); font-size: 2em; font-weight: 600; color: var(--text-color); margin-bottom: 1em; border-bottom: 1px solid var(--border-color); padding-bottom: 0.3em; }
 
-        .content h2 {
-             font-family: var(--header-font);
-             font-size: 2em;
-             font-weight: 600;
-             color: var(--text-color); /* Dark text */
-             margin-bottom: 1em;
-             border-bottom: 1px solid var(--border-color);
-             padding-bottom: 0.3em;
-        }
-
-        /* Individual Blog Posts */
+        /* Blog Posts */
+        /* Add transition for display changes (optional, can be jumpy) */
         .blog-post {
-            background-color: var(--subtle-bg); /* Semi-transparent white */
-            margin-bottom: 2.5em;
-            padding: 1.5em 2em;
-            border-left: 3px solid var(--border-color); /* Subtle dark border */
-            border-radius: 3px;
-            transition: background-color 0.3s ease, border-color 0.3s ease;
-            opacity: 1; /* Full opacity now */
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); /* Subtle shadow */
+            background-color: var(--subtle-bg); margin-bottom: 2.5em; padding: 1.5em 2em;
+            border-left: 3px solid var(--border-color); border-radius: 3px;
+            transition: background-color 0.3s ease, border-color 0.3s ease, opacity 0.3s ease; /* Add opacity transition */
+            opacity: 1; box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
+        /* Style for hidden posts if not using display:none (more complex) */
+        /* .blog-post.hidden { opacity: 0; height: 0; margin: 0; padding: 0; border: none; overflow: hidden; } */
 
-        .blog-post:hover {
-             background-color: rgba(255, 255, 255, 0.75); /* Less transparent on hover */
-             border-left-color: var(--accent-color); /* Black border on hover */
-        }
-
-        .post-header {
-            margin-bottom: 0.5em; /* Add space between header and meta */
-        }
-
-        .post-header h3 {
-            font-family: var(--header-font);
-            font-size: 1.6em;
-            font-weight: 600;
-            margin-bottom: 0.3em;
-            color: var(--text-color); /* Dark text */
-        }
-
-        /* Post Title Links */
-        .post-header h3 a {
-            color: var(--text-color); /* Dark text */
-            text-decoration: none;
-            transition: color 0.3s ease;
-        }
-         .post-header h3 a:hover {
-             color: #0056b3; /* Standard link blue on hover */
-         }
-
-        .post-meta {
-            font-size: 0.9em;
-            color: var(--secondary-text); /* Dark grey */
-            margin-bottom: 1em;
-            font-style: italic;
-        }
-        .post-meta time {
-            font-weight: 400;
-        }
-
-        /* Post Meta Links (Category) */
-        .post-meta a {
-            color: var(--secondary-text); /* Dark grey */
-            text-decoration: underline;
-            text-decoration-color: var(--border-color); /* Subtle dark underline */
-             transition: color 0.3s ease, text-decoration-color 0.3s ease;
-        }
-        .post-meta a:hover {
-             color: var(--accent-color); /* Black on hover */
-             text-decoration-color: var(--accent-color);
-        }
-
-        .post-excerpt {
-            font-size: 1.05em;
-            font-weight: 400;
-            color: var(--text-color); /* Ensure excerpt is clearly visible dark text */
-        }
+        .blog-post:hover { background-color: rgba(255, 255, 255, 0.8); border-left-color: var(--accent-color); }
+        .post-header { margin-bottom: 0.5em; }
+        .post-header h3 { font-family: var(--header-font); font-size: 1.6em; font-weight: 600; margin-bottom: 0.3em; color: var(--text-color); }
+        .post-header h3 a { color: var(--text-color); text-decoration: none; transition: color 0.3s ease; }
+         .post-header h3 a:hover { color: #0056b3; }
+        .post-meta { font-size: 0.9em; color: var(--secondary-text); margin-bottom: 1em; font-style: italic; }
+        .post-meta time { font-weight: 400; }
+        .post-meta a { color: var(--secondary-text); text-decoration: underline; text-decoration-color: var(--border-color); transition: color 0.3s ease, text-decoration-color 0.3s ease; }
+        .post-meta a:hover { color: var(--accent-color); text-decoration-color: var(--accent-color); }
+        .post-excerpt { font-size: 1.05em; font-weight: 400; color: var(--text-color); }
 
         /* Footer */
-        .site-footer {
-            width: 100%;
-            text-align: center;
-            margin-top: 3em;
-            padding: 1.5em 0;
-            border-top: 1px solid var(--border-color);
-            font-size: 0.9em;
-            color: var(--secondary-text); /* Dark grey */
-            /* Ensure footer is outside the main container's background */
-            position: relative; /* Or adjust margin if container has margin */
-            background-color: rgba(0,0,0, 0.1); /* Slight overlay to distinguish */
-        }
-        /* General Links Needs to be defined after specific ones or use higher specificity if needed */
+        .site-footer { width: 100%; text-align: center; margin-top: 3em; padding: 1.5em 0; border-top: 1px solid var(--border-color); font-size: 0.9em; color: var(--secondary-text); position: relative; background-color: rgba(0,0,0, 0.1); }
         /* General Links */
-        a {
-            color: #0056b3; /* Standard readable blue link */
-            text-decoration: underline;
-            transition: color 0.3s ease;
-        }
+        a { color: #0056b3; text-decoration: underline; transition: color 0.3s ease; }
+        a:hover { color: #003d80; }
 
-        a:hover {
-            color: #003d80; /* Darker blue on hover */
-        }
-
-
-         /* Responsive Adjustments */
+        /* Responsive */
+         @media (max-width: 992px) {
+             .nav-section > .nav-list { /* Target main list specifically */
+                 /* Revert main list to below on smaller screens */
+                 left: 0; top: 100%; margin-left: 0;
+                 transform: translateY(10px);
+             }
+             .nav-section:hover > .nav-list { transform: translateY(0); }
+             /* Keep submenu centered below parent */
+             .submenu { left: 50%; top: 100%; transform: translateX(-50%) translateY(10px); }
+             li.nav-item:hover > .submenu { transform: translateX(-50%) translateY(0); }
+         }
          @media (max-width: 768px) {
-             .container {
-                 flex-direction: column;
-                 margin: 1em;
-                 padding: 0.8em;
-             }
-             .sidebar {
-                 border-right: none;
-                 padding-right: 0;
-                 margin-bottom: 1.5em;
-                 padding-bottom: 1em;
-                 border-bottom: 1px solid var(--border-color); /* Add separator when stacked */
-             }
-             .site-header h1 {
-                 font-size: 2.2em;
-             }
-             .content h2 {
-                 font-size: 1.8em;
-             }
-             .post-header h3 {
-                 font-size: 1.4em;
-             }
-              .blog-post {
-                 padding: 1em 1.2em;
-             }
+             .container { flex-direction: column; margin: 1em; padding: 0.8em; }
+             .sidebar { border-right: none; padding-right: 0; margin-bottom: 1.5em; padding-bottom: 1em; }
+             /* Fully revert hover menus to static display */
+             .nav-section > .nav-list { position: static; opacity: 1; visibility: visible; transform: none; width: auto; box-shadow: none; border: none; background: transparent; padding: 0; margin-top: 0.5em; margin-left: 0; }
+             .nav-section:hover > .nav-list { transform: none; } /* Remove hover effect */
+             .submenu { position: static; width: auto; box-shadow: none; border: none; background: transparent; padding: 0 0 0 1em; margin-top: 0.2em; opacity: 1; visibility: visible; transform: none; }
+             li.nav-item:hover > .submenu { transform: none; } /* Remove hover effect */
+
+             .site-header h1 { font-size: 2.2em; }
+             .content h2 { font-size: 1.8em; }
+             .post-header h3 { font-size: 1.4em; }
+             .blog-post { padding: 1em 1.2em; }
          }
 
     </style>
 </head>
 <body>
 
-    <!-- Header remains outside the container for full-width potential -->
      <header class="site-header">
         <h1>Ashis's Blog</h1>
-        <p class="tagline">Vibrant Musings &amp; Digital Echoes</p>
+        <p class="tagline">Vibrant Musings & Digital Echoes</p>
     </header>
 
-    <!-- Main container now has a subtle background -->
     <div class="container">
 
         <aside class="sidebar">
             <nav class="navigation">
+                <!-- Categories Section -->
                 <section class="nav-section">
-                    <!-- Clickable Header for Categories -->
-                    <h2 id="category-trigger" class="dropdown-trigger">Categories</h2>
-                    <!-- Hidden List for Categories -->
-                    <ul id="category-menu-content" class="nav-list dropdown-content">
-                        <li><a href="#category-philosophy">Philosophy</a> (1)</li>
-                        <li><a href="#category-tech">Tech Projects</a> (1)</li>
-                        <li><a href="#category-observations">Observations</a> (1)</li>
-                        <!-- Add more categories like this -->
+                    <h2>Categories</h2>
+                    <ul id="category-menu-content" class="nav-list">
+                        <!-- Static content removed - Will be generated by script.js -->
                     </ul>
                 </section>
 
+                <!-- Archives Section -->
                 <section class="nav-section">
-                    <!-- Clickable Header for Archives -->
-                    <h2 id="archive-trigger" class="dropdown-trigger">Monthly Archives</h2>
-                     <!-- Hidden List for Archives -->
-                    <ul id="archive-menu-content" class="nav-list dropdown-content">
-                        <li><a href="#archive-2025-04">April 2025</a> (3)</li>
-                        <!-- Add more months like this -->
+                    <h2>Monthly Archives</h2>
+                    <ul id="archive-menu-content" class="nav-list">
+                        <!-- Static content removed - Will be generated by script.js -->
                     </ul>
+                </section>
+
+                <!-- Theme Controls Section (Remains Static) -->
+                <section class="nav-section theme-controls">
+                    <h2>Theme Controls</h2>
+                    <div class="control-group">
+                         <label for="swatch-group-1">Color 1:</label>
+                         <div class="swatch-container" id="swatch-group-1" data-css-var="--bg-color-start">
+                             <button class="swatch" data-color="#ff3cac" style="background-color: #ff3cac;" title="#ff3cac"></button>
+                             <button class="swatch" data-color="#f36a6f" style="background-color: #f36a6f;" title="#f36a6f"></button>
+                             <button class="swatch" data-color="#ff6b6b" style="background-color: #ff6b6b;" title="#ff6b6b"></button>
+                             <button class="swatch" data-color="#e63946" style="background-color: #e63946;" title="#e63946"></button>
+                         </div>
+                    </div>
+                    <div class="control-group">
+                         <label for="swatch-group-2">Color 2:</label>
+                         <div class="swatch-container" id="swatch-group-2" data-css-var="--bg-color-mid1">
+                            <button class="swatch" data-color="#784ba0" style="background-color: #784ba0;" title="#784ba0"></button>
+                            <button class="swatch" data-color="#8e44ad" style="background-color: #8e44ad;" title="#8e44ad"></button>
+                            <button class="swatch" data-color="#9b59b6" style="background-color: #9b59b6;" title="#9b59b6"></button>
+                             <button class="swatch" data-color="#5e548e" style="background-color: #5e548e;" title="#5e548e"></button>
+                         </div>
+                    </div>
+                    <div class="control-group">
+                        <label for="swatch-group-3">Color 3:</label>
+                        <div class="swatch-container" id="swatch-group-3" data-css-var="--bg-color-mid2">
+                            <button class="swatch" data-color="#2b86c5" style="background-color: #2b86c5;" title="#2b86c5"></button>
+                            <button class="swatch" data-color="#3498db" style="background-color: #3498db;" title="#3498db"></button>
+                            <button class="swatch" data-color="#2980b9" style="background-color: #2980b9;" title="#2980b9"></button>
+                            <button class="swatch" data-color="#00a6fb" style="background-color: #00a6fb;" title="#00a6fb"></button>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label for="swatch-group-4">Color 4:</label>
+                         <div class="swatch-container" id="swatch-group-4" data-css-var="--bg-color-end">
+                            <button class="swatch" data-color="#ffdd00" style="background-color: #ffdd00;" title="#ffdd00"></button>
+                            <button class="swatch" data-color="#f1c40f" style="background-color: #f1c40f;" title="#f1c40f"></button>
+                            <button class="swatch" data-color="#f39c12" style="background-color: #f39c12;" title="#f39c12"></button>
+                             <button class="swatch" data-color="#ffbe0b" style="background-color: #ffbe0b;" title="#ffbe0b"></button>
+                        </div>
+                    </div>
+                    <div class="speed-control">
+                        <label for="speed-slider">Animation Speed: <span id="speed-value">18</span>s</label>
+                        <input type="range" id="speed-slider" min="2" max="60" step="1" data-css-var="--animation-duration">
+                    </div>
                 </section>
             </nav>
         </aside>
 
         <main class="content">
             <h2>Recent Entries</h2>
-
+            <!-- Blog posts container -->
             <section id="blog-posts" class="post-list">
-                <!-- Blog posts will be listed here -->
-
-                <article class="blog-post" data-category="philosophy" data-date="2025-04-02">
-                    <header class="post-header">
-                        <h3><a href="meta-cognition.html">Meta Cognition</a></h3>
-                        <p class="post-meta">
-                            Posted on <time datetime="2025-04-02">April 2, 2025</time> | Category: <a href="#category-philosophy">Philosophy</a>
-                        </p>
-                    </header>
+                 <!-- Ensure your actual blog posts are here with correct data-* attributes -->
+                 <article class="blog-post" data-category="philosophy" data-date="2025-04-02">
+                    <header class="post-header"><h3><a href="meta-cognition.html">Meta Cognition</a></h3><p class="post-meta">Posted on <time datetime="2025-04-02">April 2, 2025</time> | Category: <a href="#category-philosophy">Philosophy</a></p></header>
                     <p class="post-excerpt">Metacognition Trainer: Mastermind or Monster?</p>
                 </article>
-
                 <article class="blog-post" data-category="tech" data-date="2025-04-04">
-                     <header class="post-header">
-                        <h3><a href="call-tracker.html">Call Tracker</a></h3>
-                         <p class="post-meta">
-                            Posted on <time datetime="2025-04-04">April 4, 2025</time> | Category: <a href="#category-tech">Tech Projects</a>
-                         </p>
-                    </header>
+                     <header class="post-header"><h3><a href="call-tracker.html">Call Tracker</a></h3><p class="post-meta">Posted on <time datetime="2025-04-04">April 4, 2025</time> | Category: <a href="#category-tech">Tech Projects</a></p></header>
                     <p class="post-excerpt">Track follow up calls and get reminders when due.</p>
                 </article>
-
                 <article class="blog-post" data-category="observations" data-date="2025-04-05">
-                    <header class="post-header">
-                        <h3><a href="smell_of_wet_soil.html">Smell of Wet Soil</a></h3>
-                        <p class="post-meta">
-                            Posted on <time datetime="2025-04-05">April 5, 2025</time> | Category: <a href="#category-observations">Observations</a>
-                        </p>
-                    </header>
+                    <header class="post-header"><h3><a href="smell_of_wet_soil.html">Smell of Wet Soil</a></h3><p class="post-meta">Posted on <time datetime="2025-04-05">April 5, 2025</time> | Category: <a href="#category-observations">Observations</a></p></header>
                     <p class="post-excerpt">Unearthing the Science Behind Petrichor's Earthy Aroma.</p>
                 </article>
+                <!-- Add more posts here with correct data-category and data-date="YYYY-MM-DD" -->
 
-                <!-- === How to Add a New Post ===
-                1. Create your post's HTML file (e.g., `new-post.html`).
-                2. Copy one of the <article> blocks above.
-                3. Paste the copied block here, just above this comment or below the last post.
-                4. Update the content inside the pasted <article>:
-                   - Link (`href`) in <h3><a> to your new file (`new-post.html`).
-                   - Title text in <h3><a>.
-                   - `datetime` attribute and text in <time>.
-                   - Category link/text in <p class="post-meta">.
-                   - Excerpt text in <p class="post-excerpt">.
-                   - **IMPORTANT**: Update `data-category` and `data-date` attributes on the `<article>` tag itself.
-                5. Update Sidebar Lists:
-                   - Add/update the category `<li>` under `<ul id="category-menu-content">`.
-                   - Add/update the month `<li>` under `<ul id="archive-menu-content">`.
-                   - Remember to adjust the counts `( )` in the sidebar lists.
-                -->
+            </section>
+        </main>
 
-            </section> <!-- /#blog-posts -->
-        </main> <!-- /.content -->
+    </div>
 
-    </div> <!-- /.container -->
-
-    <!-- Footer remains outside the container -->
     <footer class="site-footer">
-        <p>&copy; <time datetime="2025">2025</time> Ashis's Blog. All realities reserved.</p>
+        <p>© <time datetime="2025">2025</time> Ashis's Blog. All realities reserved.</p>
     </footer>
 
-    <script>
-        // JavaScript for Dropdown Menus
-        document.addEventListener('DOMContentLoaded', function() {
-            // Function to toggle dropdown visibility
-            const toggleDropdown = (triggerElement, contentElement) => {
-                // Toggle the 'show' class on the content list
-                contentElement.classList.toggle('show');
-                // Toggle the 'active' class on the trigger (for arrow styling)
-                triggerElement.classList.toggle('active');
-            };
+    <!-- Link the external JavaScript file -->
+    <script src="script.js" defer></script>
 
-            // Get trigger and content elements
-            const categoryTrigger = document.getElementById('category-trigger');
-            const categoryContent = document.getElementById('category-menu-content');
-            const archiveTrigger = document.getElementById('archive-trigger');
-            const archiveContent = document.getElementById('archive-menu-content');
-
-            // Add click listener for Categories dropdown
-            if (categoryTrigger && categoryContent) {
-                categoryTrigger.addEventListener('click', (event) => {
-                    event.stopPropagation(); // Prevent click from immediately closing dropdown
-                    toggleDropdown(categoryTrigger, categoryContent);
-                    // Optional: Close the other dropdown if it's open
-                    if (archiveContent.classList.contains('show')) {
-                        toggleDropdown(archiveTrigger, archiveContent);
-                    }
-                });
-            }
-
-             // Add click listener for Archives dropdown
-             if (archiveTrigger && archiveContent) {
-                archiveTrigger.addEventListener('click', (event) => {
-                     event.stopPropagation(); // Prevent click from immediately closing dropdown
-                    toggleDropdown(archiveTrigger, archiveContent);
-                     // Optional: Close the other dropdown if it's open
-                    if (categoryContent.classList.contains('show')) {
-                        toggleDropdown(categoryTrigger, categoryContent);
-                    }
-                });
-            }
-
-            // Optional: Close dropdowns if clicking outside anywhere on the document
-            document.addEventListener('click', function(event) {
-                // Close Categories if open and click is outside trigger and content
-                if (categoryContent && categoryContent.classList.contains('show')) {
-                    if (!categoryTrigger.contains(event.target) && !categoryContent.contains(event.target)) {
-                         toggleDropdown(categoryTrigger, categoryContent);
-                    }
-                }
-                // Close Archives if open and click is outside trigger and content
-                 if (archiveContent && archiveContent.classList.contains('show')) {
-                     if (!archiveTrigger.contains(event.target) && !archiveContent.contains(event.target)) {
-                         toggleDropdown(archiveTrigger, archiveContent);
-                     }
-                 }
-            });
-
-        });
-    </script>
+    <!-- Theme controls JS (if not included in script.js - this duplicates functionality, better to have ONE script.js) -->
+    <!-- Kept the JS for theme controls inline previously, but better practice is one external file -->
+    <!-- The script.js provided in the previous answer INCLUDES the theme controls logic -->
+    <!-- So REMOVE any inline <script> tags that handle theme controls if they still exist -->
 
 </body>
 </html>
