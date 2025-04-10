@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog Title - Page Title</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Primary Colors */
+            --color-primary: #3b82f6;
+            --color-primary-light: #93c5fd;
+            --color-primary-dark: #1e40af;
+            
+            /* Secondary Colors */
+            --color-secondary: #10b981;
+            --color-secondary-light: #6ee7b7;
+            --color-secondary-dark: #047857;
+            
+            /* Neutrals */
+            --color-text: #1f2937;
+            --color-text-light: #6b7280;
+            --color-background: #ffffff;
+            --color-background-alt: #f3f4f6;
+            --color-border: #e5e7eb;
+            
+            /* Accents */
+            --color-accent-1: #f59e0b;
+            --color-accent-2: #ec4899;
+            --color-accent-3: #8b5cf6;
+            
+            /* Semantic */
+            --color-success: #10b981;
+            --color-warning: #f59e0b;
+            --color-error: #ef4444;
+            --color-info: #3b82f6;
+            
+            /* Animation */
+            --animation-duration: 0.3s;
+            --transition-standard: all var(--animation-duration) ease-in-out;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--color-text);
+            background-color: var(--color-background);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+
+        /* Header & Navigation */
+        .site-header {
+            background-color: var(--color-background);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-link {
+            position: relative;
+            color: var(--color-text);
+            font-weight: 500;
+            transition: var(--transition-standard);
+        }
+
+        .nav-link:hover {
+            color: var(--color-primary);
+        }
+
+        .nav-link.active {
+            color: var(--color-primary);
+            font-weight: 600;
+        }
+
+        .nav-link.active::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background-color: var(--color-primary);
+        }
+
+        /* Blog Post Cards */
+        .blog-card {
+            border: 1px solid var(--color-border);
+            border-radius: 0.5rem;
+            overflow: hidden;
+            transition: var(--transition-standard);
+        }
+
+        .blog-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .blog-card-title {
+            color: var(--color-text);
+            font-weight: 600;
+        }
+
+        .blog-card-category {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            background-color: var(--color-primary-light);
+            color: var(--color-primary-dark);
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .blog-card-date {
+            color: var(--color-text-light);
+            font-size: 0.875rem;
+        }
+
+        /* Content Sections */
+        .content-section {
+            margin: 2rem 0;
+        }
+
+        .section-title {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: var(--color-text);
+            margin-bottom: 1rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -8px;
+            left: 0;
+            width: 60px;
+            height: 4px;
+            background-color: var(--color-primary);
+            border-radius: 2px;
+        }
+
+        /* Footer */
+        .site-footer {
+            background-color: var(--color-background-alt);
+            border-top: 1px solid var(--color-border);
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            position: relative;
+            width: 48px;
+            height: 24px;
+            border-radius: 12px;
+            background-color: var(--color-text-light);
+            cursor: pointer;
+            transition: var(--transition-standard);
+        }
+
+        .theme-toggle.dark {
+            background-color: var(--color-primary-dark);
+        }
+
+        .theme-toggle-thumb {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: white;
+            transition: var(--transition-standard);
+        }
+
+        .theme-toggle.dark .theme-toggle-thumb {
+            transform: translateX(24px);
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .data-table th, 
+        .data-table td {
+            padding: 0.75rem 1rem;
+            text-align: left;
+            border-bottom: 1px solid var(--color-border);
+        }
+
+        .data-table th {
+            background-color: var(--color-background-alt);
+            font-weight: 600;
+        }
+
+        .data-table tr:hover {
+            background-color: rgba(0,0,0,0.01);
+        }
+        
+        /* Form Elements */
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--color-border);
+            border-radius: 0.375rem;
+            background-color: var(--color-background);
+            color: var(--color-text);
+            transition: var(--transition-standard);
+        }
+
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px var(--color-primary-light);
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: var(--color-text);
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 0.5rem 1rem;
+            font-weight: 500;
+            text-align: center;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: var(--transition-standard);
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: var(--color-primary-dark);
+        }
+
+        .btn-secondary {
+            background-color: var(--color-secondary);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background-color: var(--color-secondary-dark);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--color-border);
+            color: var(--color-text);
+        }
+
+        .btn-outline:hover {
+            background-color: var(--color-background-alt);
+        }
+        
+        /* Dark Mode */
+        .dark-mode {
+            --color-text: #f3f4f6;
+            --color-text-light: #9ca3af;
+            --color-background: #1f2937;
+            --color-background-alt: #111827;
+            --color-border: #374151;
+            --color-primary-light: #1e40af;
+        }
+        
+        /* Utility Classes */
+        .visually-hidden {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            white-space: nowrap;
+            border-width: 0;
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVIGATION START -->
+    <header class="site-header py-4">
+        <div class="container">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="text-2xl font-bold text-gray-800">Mind<span class="text-blue-500">Bytes</span></a>
+                
+                <button class="md:hidden px-2 py-1" id="mobile-menu-button">
+                    <i class="fas fa-bars text-lg"></i>
+                </button>
+                
+                <nav class="hidden md:flex space-x-6">
+                    <a href="index.html" class="nav-link active">Home</a>
+                    <a href="meta-cognition.html" class="nav-link">Metacognition</a>
+                    <a href="call-tracker.html" class="nav-link">Call Tracker</a>
+                    <a href="smell_of_wet_soil.html" class="nav-link">Petrichor</a>
+                    <a href="#" class="nav-link">About</a>
+                </nav>
+                
+                <div class="hidden md:flex items-center space-x-4">
+                    <div class="theme-toggle" id="theme-toggle">
+                        <span class="theme-toggle-thumb"></span>
+                    </div>
+                    <a href="#" class="btn btn-primary">Subscribe</a>
+                </div>
+            </div>
+            
+            <!-- Mobile Navigation -->
+            <div class="md:hidden mt-4 hidden" id="mobile-menu">
+                <nav class="flex flex-col space-y-4">
+                    <a href="index.html" class="nav-link active">Home</a>
+                    <a href="meta-cognition.html" class="nav-link">Metacognition</a>
+                    <a href="call-tracker.html" class="nav-link">Call Tracker</a>
+                    <a href="smell_of_wet_soil.html" class="nav-link">Petrichor</a>
+                    <a href="#" class="nav-link">About</a>
+                </nav>
+                <div class="mt-4 flex items-center justify-between">
+                    <div class="theme-toggle" id="mobile-theme-toggle">
+                        <span class="theme-toggle-thumb"></span>
+                    </div>
+                    <a href="#" class="btn btn-primary">Subscribe</a>
+                </div>
+            </div>
+        </div>
+    </header>
+    <!-- NAVIGATION END -->
+
+    <!-- MAIN CONTENT START -->
+    <main class="container py-8" id="page-content">
+        <!-- This section will be replaced with page-specific content -->
+        <section class="content-section">
+            <h1 class="section-title text-3xl md:text-4xl font-bold mb-8">Recent Entries</h1>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Blog Post Card 1 -->
+                <article class="blog-card">
+                    <div class="p-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="blog-card-category">Philosophy</span>
+                            <span class="blog-card-date">April 2, 2025</span>
+                        </div>
+                        <h2 class="blog-card-title text-xl mb-3">
+                            <a href="meta-cognition.html" class="hover:text-blue-500 transition-colors">
+                                Metacognition Trainer: Mastermind or Monster?
+                            </a>
+                        </h2>
+                        <p class="text-gray-600 mb-4">
+                            Explore the power of thinking about your thinking, and how it can transform your decision-making abilities.
+                        </p>
+                        <a href="meta-cognition.html" class="inline-flex items-center text-blue-500 hover:text-blue-700">
+                            Read more <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </article>
+                
+                <!-- Blog Post Card 2 -->
+                <article class="blog-card">
+                    <div class="p-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="blog-card-category">Tech Projects</span>
+                            <span class="blog-card-date">April 4, 2025</span>
+                        </div>
+                        <h2 class="blog-card-title text-xl mb-3">
+                            <a href="call-tracker.html" class="hover:text-blue-500 transition-colors">
+                                Call Tracker
+                            </a>
+                        </h2>
+                        <p class="text-gray-600 mb-4">
+                            A simple tool to track follow-up calls and get reminders when they're due. Perfect for busy professionals.
+                        </p>
+                        <a href="call-tracker.html" class="inline-flex items-center text-blue-500 hover:text-blue-700">
+                            Read more <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </article>
+                
+                <!-- Blog Post Card 3 -->
+                <article class="blog-card">
+                    <div class="p-6">
+                        <div class="flex items-center gap-2 mb-3">
+                            <span class="blog-card-category">Observations</span>
+                            <span class="blog-card-date">April 5, 2025</span>
+                        </div>
+                        <h2 class="blog-card-title text-xl mb-3">
+                            <a href="smell_of_wet_soil.html" class="hover:text-blue-500 transition-colors">
+                                Smell of Wet Soil
+                            </a>
+                        </h2>
+                        <p class="text-gray-600 mb-4">
+                            Unearthing the science behind petrichor's earthy aroma and why we find it so appealing.
+                        </p>
+                        <a href="smell_of_wet_soil.html" class="inline-flex items-center text-blue-500 hover:text-blue-700">
+                            Read more <i class="fas fa-arrow-right ml-2"></i>
+                        </a>
+                    </div>
+                </article>
+            </div>
+        </section>
+        
+        <section class="content-section mt-12">
+            <h2 class="section-title">Categories</h2>
+            <div class="flex flex-wrap gap-3 mt-6">
+                <a href="#" class="blog-card-category">All</a>
+                <a href="#" class="blog-card-category">Philosophy</a>
+                <a href="#" class="blog-card-category">Tech Projects</a>
+                <a href="#" class="blog-card-category">Observations</a>
+                <a href="#" class="blog-card-category">Tutorials</a>
+                <a href="#" class="blog-card-category">Reviews</a>
+            </div>
+        </section>
+        
+        <section class="content-section mt-12">
+            <h2 class="section-title">Newsletter</h2>
+            <div class="bg-gray-50 p-6 rounded-lg mt-6">
+                <p class="mb-4">Stay updated with the latest posts and articles. No spam, just weekly insights.</p>
+                <form class="flex flex-col sm:flex-row gap-3">
+                    <input type="email" placeholder="Your email address" class="form-input sm:flex-1">
+                    <button type="submit" class="btn btn-primary">Subscribe</button>
+                </form>
+            </div>
+        </section>
+    </main>
+    <!-- MAIN CONTENT END -->
+
+    <!-- FOOTER START -->
+    <footer class="site-footer py-8">
+        <div class="container">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div class="md:col-span-2">
+                    <h3 class="text-xl font-bold mb-4">Mind<span class="text-blue-500">Bytes</span></h3>
+                    <p class="text-gray-600 mb-4">
+                        Exploring ideas at the intersection of philosophy, technology, and everyday observations.
+                    </p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-500 hover:text-blue-500 transition-colors">
+                            <i class="fab fa-twitter text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-blue-500 transition-colors">
+                            <i class="fab fa-facebook text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-blue-500 transition-colors">
+                            <i class="fab fa-instagram text-xl"></i>
+                        </a>
+                        <a href="#" class="text-gray-500 hover:text-blue-500 transition-colors">
+                            <i class="fab fa-github text-xl"></i>
+                        </a>
+                    </div>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-600 hover:text-blue-500 transition-colors">Home</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors">About</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors">Archives</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="text-lg font-semibold mb-4">Categories</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors">Philosophy</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors">Tech Projects</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors">Observations</a></li>
+                        <li><a href="#" class="text-gray-600 hover:text-blue-500 transition-colors">Tutorials</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-200 mt-8 pt-6 flex justify-between items-center">
+                <p class="text-gray-600 text-sm">© 2025 MindBytes. All rights reserved.</p>
+                <div class="flex space-x-4 text-sm">
+                    <a href="#" class="text-gray-600 hover:text-blue-500 transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-gray-600 hover:text-blue-500 transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+    <!-- FOOTER END -->
+
+    <!-- SCRIPTS START -->
+    <script>
+        // Mobile Navigation Toggle
+        document.addEventListener('DOMContentLoaded', function() {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            
+            if (mobileMenuButton && mobileMenu) {
+                mobileMenuButton.addEventListener('click', function() {
+                    mobileMenu.classList.toggle('hidden');
+                });
+            }
+            
+            // Theme Toggle
+            const themeToggles = document.querySelectorAll('.theme-toggle');
+            let darkMode = localStorage.getItem('darkMode') === 'true';
+            
+            // Initialize theme based on local storage
+            if (darkMode) {
+                document.body.classList.add('dark-mode');
+                themeToggles.forEach(toggle => toggle.classList.add('dark'));
+            }
+            
+            themeToggles.forEach(toggle => {
+                toggle.addEventListener('click', function() {
+                    darkMode = !darkMode;
+                    localStorage.setItem('darkMode', darkMode);
+                    
+                    document.body.classList.toggle('dark-mode');
+                    themeToggles.forEach(t => t.classList.toggle('dark'));
+                });
+            });
+            
+            // Active Navigation Link
+            const currentLocation = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-link');
+            
+            navLinks.forEach(link => {
+                const linkPath = link.getAttribute('href');
+                if (currentLocation.includes(linkPath) && linkPath !== 'index.html') {
+                    navLinks.forEach(l => l.classList.remove('active'));
+                    link.classList.add('active');
+                } else if (currentLocation.endsWith('/') || currentLocation.endsWith('index.html')) {
+                    if (linkPath === 'index.html') {
+                        navLinks.forEach(l => l.classList.remove('active'));
+                        link.classList.add('active');
+                    }
+                }
+            });
+        });
+        
+        // Template for adding new entries dynamically (if needed)
+        function createBlogCard(title, category, date, excerpt, link) {
+            const card = document.createElement('article');
+            card.className = 'blog-card';
+            
+            card.innerHTML = `
+                <div class="p-6">
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="blog-card-category">${category}</span>
+                        <span class="blog-card-date">${date}</span>
+                    </div>
+                    <h2 class="blog-card-title text-xl mb-3">
+                        <a href="${link}" class="hover:text-blue-500 transition-colors">
+                            ${title}
+                        </a>
+                    </h2>
+                    <p class="text-gray-600 mb-4">
+                        ${excerpt}
+                    </p>
+                    <a href="${link}" class="inline-flex items-center text-blue-500 hover:text-blue-700">
+                        Read more <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+            `;
+            
+            return card;
+        }
+    </script>
+    <!-- SCRIPTS END -->
+</body>
+</html>

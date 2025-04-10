@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Metacognition Trainer | My Blog</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #4A6FA5;
+            --secondary-color: #166088;
+            --accent-color: #4CAF50;
+            --text-color: #333333;
+            --bg-color: #F9F9F9;
+            --card-bg: #FFFFFF;
+            --card-border: #E5E7EB;
+            --hover-color: #5D87BD;
+            --muted-color: #718096;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            color: var(--text-color);
+            background-color: var(--bg-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .navbar {
+            background-color: var(--card-bg);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+        
+        .nav-link {
+            color: var(--text-color);
+            padding: 0.5rem 1rem;
+            transition: color 0.2s ease;
+        }
+        
+        .nav-link:hover, .nav-link.active {
+            color: var(--primary-color);
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 600;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            color: var(--secondary-color);
+        }
+        
+        h1 {
+            font-size: 2.25rem;
+        }
+        
+        h2 {
+            font-size: 1.8rem;
+            margin-top: 2rem;
+        }
+        
+        p {
+            margin-bottom: 1.5rem;
+        }
+        
+        .blog-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .blog-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        
+        .tag {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.75rem;
+            margin-right: 0.5rem;
+        }
+        
+        .btn {
+            display: inline-block;
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.25rem;
+            font-weight: 500;
+            text-align: center;
+            transition: background-color 0.2s ease;
+        }
+        
+        .btn:hover {
+            background: var(--hover-color);
+        }
+        
+        footer {
+            background: var(--card-bg);
+            border-top: 1px solid var(--card-border);
+            padding: 2rem 0;
+            margin-top: 4rem;
+        }
+        
+        blockquote {
+            border-left: 4px solid var(--primary-color);
+            padding-left: 1rem;
+            font-style: italic;
+            margin: 1.5rem 0;
+            color: var(--muted-color);
+        }
+        
+        .meta-module {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .meta-module h2 {
+            border-bottom: 1px solid var(--card-border);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .practice-box {
+            background: #f1f5f9;
+            border-left: 4px solid var(--accent-color);
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        .warning-box {
+            background: #FEF2F2;
+            border-left: 4px solid #DC2626;
+            padding: 1rem;
+            margin: 1rem 0;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+        }
+        
+        table th, table td {
+            border: 1px solid var(--card-border);
+            padding: 0.75rem;
+            text-align: left;
+        }
+        
+        table th {
+            background: #f1f5f9;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 0.5rem;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            h2 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="container py-4">
+            <div class="flex items-center justify-between">
+                <a href="index.html" class="navbar-brand">ThoughtStream</a>
+                <div class="hidden md:block">
+                    <div class="flex space-x-4">
+                        <a href="index.html" class="nav-link">Home</a>
+                        <a href="meta-cognition.html" class="nav-link active">Metacognition</a>
+                        <a href="call-tracker.html" class="nav-link">Call Tracker</a>
+                        <a href="smell_of_wet_soil.html" class="nav-link">Petrichor</a>
+                        <a href="#" class="nav-link">About</a>
+                    </div>
+                </div>
+                <button class="md:hidden focus:outline-none">
+                    <i class="fas fa-bars text-xl"></i>
+                </button>
+            </div>
+        </div>
+        <!-- Mobile menu -->
+        <div class="md:hidden hidden px-2 pt-2 pb-4 space-y-1 text-center">
+            <a href="index.html" class="nav-link block">Home</a>
+            <a href="meta-cognition.html" class="nav-link block active">Metacognition</a>
+            <a href="call-tracker.html" class="nav-link block">Call Tracker</a>
+            <a href="smell_of_wet_soil.html" class="nav-link block">Petrichor</a>
+            <a href="#" class="nav-link block">About</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container py-8">
+        <article>
+            <header class="mb-8">
+                <div class="tag">Philosophy</div>
+                <h1 class="text-4xl font-bold mb-4">Metacognition Trainer: Mastermind or Monster?</h1>
+                <div class="text-sm text-gray-500">Published on April 2, 2025</div>
+            </header>
+
+            <!-- Introduction Module -->
+            <section class="meta-module">
+                <h2>Introduction: The Metacognition Edge</h2>
+                <blockquote>
+                    "this isn't a tip it's a warning... this brain hack doesn't just make you powerful it makes you dangerous..."
+                </blockquote>
+                <p>Metacognition is the ability to think about your own thinking. It's the difference between reacting passively and acting strategically.</p>
+                
+                <h3 class="text-xl font-semibold mt-6 mb-4">Level 1 vs. Level 2 Thinking</h3>
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <h4 class="font-semibold mb-2">Level 1 (The Pawn):</h4>
+                        <p>Reacts directly to feelings. Angry → Yell. Nervous → Avoid. Confident → Speak. Lives on emotional autopilot.</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <h4 class="font-semibold mb-2">Level 2 (The Chess Player):</h4>
+                        <p>Observes feelings, questions actions. "Why do I feel this? Is this emotion helpful? What happens next if I do this?" This is where conscious control begins.</p>
+                    </div>
+                </div>
+                
+                <blockquote class="my-6">
+                    "...the difference between a pawn and a chess player between a person who gets played and a person who plays the board."
+                </blockquote>
+                
+                <p>This trainer will guide you through key metacognitive skills. Use them wisely to enhance self-awareness and emotional intelligence. Be mindful of the potential for manipulation (the "Monster" path), which we'll also explore to help you recognize and protect yourself.</p>
+            </section>
+
+            <!-- Emotional Labeling Module -->
+            <section class="meta-module">
+                <h2>Module: Emotional Labeling</h2>
+                <p>Understanding your emotions, not just feeling them, is the foundation of emotional intelligence. Stop emotional autopilot.</p>
+                
+                <blockquote>
+                    "Most people live in emotional autopilot... they react no pause no processing just action... a metacognitive thinker does something different they step back from the emotion they observe it..."
+                </blockquote>
+                
+                <h3 class="text-xl font-semibold mt-6 mb-4">Why Label Emotions?</h3>
+                <ul class="list-disc pl-6 mb-6">
+                    <li class="mb-2">Avoid regrettable reactions.</li>
+                    <li class="mb-2">Remain calm under pressure (naming reduces intensity).</li>
+                    <li class="mb-2">Understand others better (practice on self improves reading others).</li>
+                </ul>
+                
+                <blockquote>
+                    "unlabeled emotions control you labeled emotions obey you"
+                </blockquote>
+                
+                <div class="practice-box mt-6">
+                    <h4 class="font-semibold mb-2">Practice: Label in Layers</h4>
+                    <p class="mb-4">When you feel a strong emotion, pause and ask:</p>
+                    <ul class="list-disc pl-6">
+                        <li>What is the surface emotion I'm feeling right now?</li>
+                        <li>What triggered it?</li>
+                        <li>Is this the true emotion, or is there a deeper one?</li>
+                        <li>What unmet need or belief might be fueling this?</li>
+                    </ul>
+                </div>
+                
+                <div class="mt-6 text-center">
+                    <div class="bg-gray-100 p-4 rounded-md inline-block">
+                        <h4 class="text-lg font-semibold">Scenario Challenge (Coming Soon)</h4>
+                        <p>Analyze scenarios and identify the true underlying emotions.</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Thought Tracking Journal Module -->
+            <section class="meta-module">
+                <h2>Module: Thought Tracking Journal</h2>
+                <p>Your thoughts are blueprints. Unexamined thoughts, especially negative ones, can build a life you didn't choose.</p>
+                
+                <blockquote>
+                    "Most people don't think they're thoughts they receive them like mental notifications they never unsubscribed from... they don't question these thoughts they believe them."
+                </blockquote>
+                
+                <h3 class="text-xl font-semibold mt-6 mb-4">The Metacognitive Truth:</h3>
+                <ul class="list-disc pl-6 mb-6">
+                    <li class="mb-2">Not every thought is yours (inherited, absorbed).</li>
+                    <li class="mb-2">Not every thought is true.</li>
+                    <li class="mb-2">Not every thought deserves your attention.</li>
+                </ul>
+                
+                <p>Tracking involves pausing, identifying thoughts, and questioning their validity and utility.</p>
+                
+                <blockquote>
+                    "It's like installing a security camera inside your mind... you check its ID."
+                </blockquote>
+                
+                <div class="bg-white border border-gray-200 rounded-md p-6 mt-6">
+                    <h3 class="text-xl font-semibold mb-4">Log a Thought</h3>
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Your Thought</label>
+                            <textarea class="w-full border border-gray-300 rounded-md p-2" rows="3" placeholder="What thought are you examining?"></textarea>
+                        </div>
+                        <div class="grid md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Category</label>
+                                <select class="w-full border border-gray-300 rounded-md p-2">
+                                    <option>Select</option>
+                                    <option>Belief</option>
+                                    <option>Fear</option>
+                                    <option>Judgment</option>
+                                    <option>Desire</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Basis</label>
+                                <select class="w-full border border-gray-300 rounded-md p-2">
+                                    <option>Select</option>
+                                    <option>Fact</option>
+                                    <option>Assumption</option>
+                                    <option>Opinion</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Origin</label>
+                                <select class="w-full border border-gray-300 rounded-md p-2">
+                                    <option>Select</option>
+                                    <option>My Experience</option>
+                                    <option>Others' Opinions</option>
+                                    <option>Media/Culture</option>
+                                    <option>Unknown</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Analysis</label>
+                            <textarea class="w-full border border-gray-300 rounded-md p-2" rows="3" placeholder="Is this thought helpful? True? What evidence supports or refutes it?"></textarea>
+                        </div>
+                        <button type="button" class="btn">Log Thought</button>
+                    </form>
+                </div>
+                
+                <div class="mt-6">
+                    <h3 class="text-xl font-semibold mb-4">Your Journal Entries</h3>
+                    <p class="text-gray-500 italic">No entries yet. Start tracking your thoughts!</p>
+                </div>
+            </section>
+
+            <!-- Strategic Observation Module -->
+            <section class="meta-module">
+                <h2>Module: Strategic Observation</h2>
+                <p>Go beyond hearing words; observe the entire social chessboard. Split your awareness: participate and watch simultaneously.</p>
+                
+                <blockquote>
+                    "Channel one you're fully engaged... Channel two you're quietly watching everything unfold... This second channel is where the game really begins."
+                </blockquote>
+                
+                <h3 class="text-xl font-semibold mt-6 mb-4">What to Notice:</h3>
+                <div class="grid md:grid-cols-2 gap-4">
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <h4 class="font-semibold mb-2">Micro-reactions:</h4>
+                        <p>Flickers, clenches, twitches (leaked truths).</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <h4 class="font-semibold mb-2">Hesitations/Pauses:</h4>
+                        <p>Uncertainty, internal conflict, deception.</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <h4 class="font-semibold mb-2">Power Moves:</h4>
+                        <p>Interruptions, mirroring, leaning (status dances).</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <h4 class="font-semibold mb-2">Emotional Triggers:</h4>
+                        <p>Overreactions to certain topics (pressure points).</p>
+                    </div>
+                    <div class="bg-gray-50 p-4 rounded-md md:col-span-2">
+                        <h4 class="font-semibold mb-2">Incongruence:</h4>
+                        <p>Fake smiles, forced laughter (masking intent).</p>
+                    </div>
+                </div>
+                
+                <blockquote class="my-6">
+                    "It's like putting on x-ray glasses for human interaction."
+                </blockquote>
+                
+                <div class="warning-box mt-6">
+                    <h4 class="font-semibold mb-2">Warning: The Monster's Toolkit</h4>
+                    <p>This skill is neutral, but manipulators weaponize it. They observe to find weaknesses, test reactions, and exploit vulnerabilities. Understanding this helps you recognize and defend against it.</p>
+                    <blockquote class="mt-4 mb-0">
+                        "...with the same awareness you can disarm them or you can become one of them... That's where the line between Mastermind and monster begins to blur."
+                    </blockquote>
+                </div>
+                
+                <div class="bg-white border border-gray-200 rounded-md p-6 mt-6">
+                    <h3 class="text-xl font-semibold mb-4">Scenario Simulator (Example)</h3>
+                    <div class="bg-gray-50 p-4 rounded-md mb-4">
+                        <p><strong>Scenario:</strong> You're presenting an idea in a meeting. A senior colleague, Alex, laughs loudly after you finish a point, slightly longer than seems natural, while looking around the room briefly before looking back at you.</p>
+                    </div>
+                    
+                    <h4 class="font-semibold mb-2">Analysis Questions:</h4>
+                    <form class="space-y-4">
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">What might the extended laughter signal? (Select best fit)</label>
+                            <select class="w-full border border-gray-300 rounded-md p-2">
+                                <option>Select an answer</option>
+                                <option>Genuine amusement at your idea</option>
+                                <option>An attempt to undermine your credibility</option>
+                                <option>Nervousness about their own presentation</option>
+                                <option>A signal to others in the room</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">The brief look around the room might indicate:</label>
+                            <select class="w-full border border-gray-300 rounded-md p-2">
+                                <option>Select an answer</option>
+                                <option>Seeking validation from others</option>
+                                <option>Checking if others share their reaction</option>
+                                <option>Inviting others to join in the laughter</option>
+                                <option>Distraction from something else in the room</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Based on the transcript, a strategic (Level 2) response would be to:</label>
+                            <select class="w-full border border-gray-300 rounded-md p-2">
+                                <option>Select an answer</option>
+                                <option>Pause and ask Alex directly what they found amusing</option>
+                                <option>Continue as if nothing happened, maintaining your composure</option>
+                                <option>Make a self-deprecating joke to defuse the tension</option>
+                                <option>Ask the room if there are questions before continuing</option>
+                            </select>
+                        </div>
+                        <button type="button" class="btn">Submit Analysis</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Mastering Metacognition Module -->
+            <section class="meta-module">
+                <h2>Module: Mastering Metacognition</h2>
+                <p>Consistent practice turns awareness into skill. Here are techniques from the transcript:</p>
+                
+                <div class="grid md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-white border border-gray-200 rounded-md p-4">
+                        <h3 class="text-lg font-semibold mb-2">1. Third-Person Self-Talk</h3>
+                        <p>Narrate your thoughts/emotions as an observer ("He is feeling X because...") to create distance and engage the rational brain.</p>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 rounded-md p-4">
+                        <h3 class="text-lg font-semibold mb-2">2. Daily Rewind / Reflection</h3>
+                        <p>End-of-day 5-minute review: Strongest emotion? Trigger? React/Respond? Different next time? Keep a "Mental Moves Journal" (use Thought Tracker).</p>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 rounded-md p-4">
+                        <h3 class="text-lg font-semibold mb-2">3. Treat Thoughts as Non-Facts</h3>
+                        <p>Categorize thoughts (Fact/Feeling, Helpful/Harmful). Challenge limiting thoughts with: "That's just a thought, not a truth."</p>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 rounded-md p-4">
+                        <h3 class="text-lg font-semibold mb-2">4. Split Awareness Practice</h3>
+                        <p>In conversations, consciously track your <em>own</em> thoughts/feelings AND observe the <em>other person</em> (What are they trying to get? What aren't they saying? What triggered their reaction?).</p>
+                    </div>
+                </div>
+                
+                <div class="bg-gray-50 p-4 rounded-md mt-6">
+                    <h3 class="text-lg font-semibold mb-2">Mastery Formula Recap:</h3>
+                    <p class="text-center font-medium">Pause → Label → Question → Choose → Reflect</p>
+                </div>
+                
+                <div class="mt-8">
+                    <h3 class="text-xl font-semibold mb-4">Your Progress</h3>
+                    <p>Keep practicing to sharpen your metacognitive skills!</p>
+                    
+                    <div class="mt-4">
+                        <div class="flex justify-between mb-1">
+                            <span class="text-sm font-medium">Score: 0 points</span>
+                            <span class="text-sm font-medium">0%</span>
+                        </div>
+                        <div class="w-full bg-gray-200 rounded-full h-2.5">
+                            <div class="bg-primary-600 h-2.5 rounded-full" style="width: 0%; background-color: var(--primary-color);"></div>
+                        </div>
+                        <p class="text-sm text-gray-500 mt-2">Levels: Novice (0-20), Apprentice (21-50), Adept (51-100), Strategist (101-200), Mastermind (201+)</p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Dark Side Module -->
+            <section class="meta-module">
+                <h2>The Dark Side: Recognizing Manipulation</h2>
+                <p>Understanding how metacognitive skills can be twisted into manipulative tactics is crucial for self-protection.</p>
+                
+                <blockquote>
+                    "what happens when someone uses this ability without empathy... when they don't want to understand people they want to use them? That's when a mastermind becomes something far more dangerous a monster."
+                </blockquote>
+                
+                <h3 class="text-xl font-semibold mt-6 mb-4">Common Manipulative Tactics (Using Metacognition):</h3>
+                <div class="space-y-4">
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <h4 class="font-semibold mb-2">Exploiting Insecurities:</h4>
+                        <p>Analyzing fears to make you feel worthless or dependent (e.g., "No one else understands you like I do").</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <h4 class="font-semibold mb-2">Thought Inception:</h4>
+                        <p>Planting ideas subtly so you think they're yours (e.g., using leading questions or repetition).</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <h4 class="font-semibold mb-2">Calculated Silence:</h4>
+                        <p>Using pauses or delayed responses to create pressure, guilt, or anxiety.</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <h4 class="font-semibold mb-2">Reward/Punishment Loops:</h4>
+                        <p>Giving/withdrawing affection or approval to control behavior (common in toxic dynamics).</p>
+                    </div>
+                    
+                    <div class="bg-gray-50 p-4 rounded-md">
+                        <h4 class="font-semibold mb-2">Playing the Victim:</h4>
+                        <p>Oversharing or feigning weakness to build false trust, create obligation, or manipulate guilt.</p>
+                    </div>
+                </div>
+                
+                <div class="practice-box mt-6">
+                    <h4 class="font-semibold mb-2">Stay Vigilant:</h4>
+                    <p>Recognize these patterns in others. Use your own metacognitive skills (observation, questioning) to see behind masks and protect your mental space. The goal is awareness and defense, not adopting these tactics.</p>
+                </div>
+                
+                <blockquote class="mt-6">
+                    "mastering this brain hack means facing the darkness inside you first."
+                </blockquote>
+            </section>
+
+            <!-- Data Import/Export Module -->
+            <section class="meta-module">
+                <h2>Data Import / Export</h2>
+                <p>Save your progress and journal entries to a file, or load data from a previous session.</p>
+                
+                <div class="grid md:grid-cols-2 gap-6 mt-6">
+                    <div class="bg-white border border-gray-200 rounded-md p-6">
+                        <h3 class="text-lg font-semibold mb-4">Export Data</h3>
+                        <p>This will save your current score and all journal entries.</p>
+                        <button type="button" class="btn w-full mt-4">Export Progress</button>
+                    </div>
+                    
+                    <div class="bg-white border border-gray-200 rounded-md p-6">
+                        <h3 class="text-lg font-semibold mb-4">Import Data</h3>
+                        <p>Select a previously exported <code>.json</code> file.</p>
+                        <div class="mt-4">
+                            <input type="file" class="w-full text-sm" accept=".json">
+                        </div>
+                        <button type="button" class="btn w-full mt-4">Import Progress</button>
+                    </div>
+                </div>
+                
+                <div class="warning-box mt-6">
+                    <p class="text-sm">Warning: Importing will overwrite your current progress and journal entries in this browser.</p>
+                </div>
+            </section>
+        </article>
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <div class="grid md:grid-cols-3 gap-8">
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">ThoughtStream</h3>
+                    <p class="text-gray-500">Exploring ideas that matter through thoughtful content and practical tools.</p>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Quick Links</h3>
+                    <ul class="space-y-2">
+                        <li><a href="index.html" class="text-gray-500 hover:text-primary-600 hover:text-primary-color">Home</a></li>
+                        <li><a href="meta-cognition.html" class="text-gray-500 hover:text-primary-600 hover:text-primary-color">Metacognition</a></li>
+                        <li><a href="call-tracker.html" class="text-gray-500 hover:text-primary-600 hover:text-primary-color">Call Tracker</a></li>
+                        <li><a href="smell_of_wet_soil.html" class="text-gray-500 hover:text-primary-600 hover:text-primary-color">Petrichor</a></li>
+                        <li><a href="#" class="text-gray-500 hover:text-primary-600 hover:text-primary-color">About</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h3 class="text-xl font-semibold mb-4">Connect</h3>
+                    <div class="flex space-x-4">
+                        <a href="#" class="text-gray-500 hover:text-primary-600 hover:text-primary-color"><i class="fab fa-twitter text-xl"></i></a>
+                        <a href="#" class="text-gray-500 hover:text-primary-600 hover:text-primary-color"><i class="fab fa-linkedin text-xl"></i></a>
+                        <a href="#" class="text-gray-500 hover:text-primary-600 hover:text-primary-color"><i class="fab fa-github text-xl"></i></a>
+                        <a href="#" class="text-gray-500 hover:text-primary-600 hover:text-primary-color"><i class="fas fa-envelope text-xl"></i></a>
+                    </div>
+                    <div class="mt-4">
+                        <p class="text-gray-500">Subscribe to our newsletter for updates:</p>
+                        <div class="flex mt-2">
+                            <input type="email" placeholder="Email address" class="flex-grow border border-gray-300 rounded-l-md px-4 py-2 focus:outline-none">
+                            <button class="bg-primary-600 text-white px-4 py-2 rounded-r-md" style="background-color: var(--primary-color);">Subscribe</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-gray-200 mt-8 pt-6 text-center">
+                <p class="text-gray-500">© 2025 ThoughtStream. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.querySelector('.navbar button').addEventListener('click', function() {
+            const mobileMenu = document.querySelector('.md\\:hidden:not(button)');
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Form submission handlers (placeholders for real functionality)
+        const forms = document.querySelectorAll('form');
+        forms.forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                alert('This feature would save/process your input in a real application.');
+            });
+        });
+        
+        // Buttons
+        const buttons = document.querySelectorAll('button.btn');
+        buttons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                if (button.textContent.includes('Export')) {
+                    alert('This would export your progress data in a real application.');
+                } else if (button.textContent.includes('Import')) {
+                    alert('This would import your progress data in a real application.');
+                } else if (button.textContent.includes('Log')) {
+                    alert('This would save your thought entry in a real application.');
+                } else if (button.textContent.includes('Submit')) {
+                    alert('This would evaluate your response in a real application.');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

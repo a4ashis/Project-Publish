@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog System Documentation</title>
+    <!-- Tailwind CSS via jsdelivr CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome for icons -->
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .markdown-body {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+        .markdown-body pre {
+            background-color: #f6f8fa;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+        .markdown-body pre code {
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 0.875rem;
+            line-height: 1.5;
+        }
+        .markdown-body code {
+            background-color: #f6f8fa;
+            border-radius: 0.25rem;
+            padding: 0.125rem 0.25rem;
+            font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+        }
+        .markdown-body a {
+            color: #0366d6;
+            text-decoration: none;
+        }
+        .markdown-body a:hover {
+            text-decoration: underline;
+        }
+        /* Dark mode adjustments */
+        @media (prefers-color-scheme: dark) {
+            body {
+                background-color: #0d1117;
+                color: #e6edf3;
+            }
+            .markdown-body pre,
+            .markdown-body code {
+                background-color: #161b22;
+                color: #e6edf3;
+            }
+            .markdown-body a {
+                color: #58a6ff;
+            }
+        }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100">
+    <header class="bg-blue-600 text-white py-6 shadow-md">
+        <div class="container mx-auto px-4">
+            <h1 class="text-3xl font-bold">Blog System Documentation</h1>
+        </div>
+    </header>
+
+    <div class="markdown-body">
+        <h1 class="text-4xl font-bold mt-8 mb-4">Modern Blog System Documentation</h1>
+        
+        <p class="text-lg mb-4">
+            This documentation will guide you through using, customizing, and extending the blog system.
+        </p>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4" id="toc">Table of Contents</h2>
+        <ul class="list-disc ml-6 mb-6 space-y-1">
+            <li><a href="#overview">System Overview</a></li>
+            <li><a href="#structure">File Structure</a></li>
+            <li><a href="#add-pages">Adding New Pages</a></li>
+            <li><a href="#design">Modifying the Design</a></li>
+            <li><a href="#functionality">Customizing Functionality</a></li>
+            <li><a href="#media">Working with Media</a></li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4" id="overview">System Overview</h2>
+        <p class="mb-4">
+            This blog system is built with pure HTML, CSS, and JavaScript, requiring no server-side processing or build tools. 
+            It features a consistent design system, responsive layout, and modular components that make it easy to expand.
+        </p>
+        <p class="mb-4">
+            <strong>Key Features:</strong>
+        </p>
+        <ul class="list-disc ml-6 mb-6">
+            <li>Mobile-first responsive design</li>
+            <li>Unified color scheme with CSS variables</li>
+            <li>Dark/light mode support</li>
+            <li>Post filtering by category</li>
+            <li>Modular structure for easy expansion</li>
+            <li>Interactive components (Call Tracker, Journal)</li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4" id="structure">File Structure</h2>
+        <pre><code>blog/
+├── index.html              # Homepage with recent posts
+├── meta-cognition.html     # Article page example
+├── smell_of_wet_soil.html  # Article page example
+├── call-tracker.html       # Interactive tool example
+├── scripts.js              # Consolidated JavaScript
+└── README.md               # This documentation</code></pre>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4" id="add-pages">Adding New Pages</h2>
+        <p class="mb-4">
+            To add a new page to the blog system, follow these steps:
+        </p>
+        
+        <h3 class="text-xl font-semibold mt-4 mb-2">Method 1: Copy an Existing Page</h3>
+        <ol class="list-decimal ml-6 mb-6 space-y-2">
+            <li>Copy an existing HTML file (like <code>smell_of_wet_soil.html</code>) to use as a template</li>
+            <li>Rename the file to match your new content (e.g., <code>my-new-post.html</code>)</li>
+            <li>Update the <code>&lt;title&gt;</code> tag and metadata</li>
+            <li>Replace the content in the <code>&lt;main&gt;</code> section with your new content</li>
+            <li>Update the category and publication date</li>
+            <li>Add a link to your new page in <code>index.html</code></li>
+        </ol>
+        
+        <h3 class="text-xl font-semibold mt-4 mb-2">Method 2: Create From Scratch</h3>
+        <p class="mb-4">
+            Here's the basic structure for a new page:
+        </p>
+        <pre><code>&lt;!DOCTYPE html&gt;
+&lt;html lang="en"&gt;
+&lt;head&gt;
+    &lt;meta charset="UTF-8"&gt;
+    &lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;
+    &lt;title&gt;Your Post Title - Blog&lt;/title&gt;
+    
+    &lt;!-- Tailwind CSS via jsdelivr CDN --&gt;
+    &lt;link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet"&gt;
+    
+    &lt;!-- Font Awesome icons --&gt;
+    &lt;link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet"&gt;
+    
+    &lt;style&gt;
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #6366f1;
+            --text-color: #1f2937;
+            --bg-color: #f9fafb;
+            --card-bg: #ffffff;
+            --border-color: #e5e7eb;
+            --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+        }
+        
+        /* Common styles... copy from an existing page */
+        
+        /* Dark mode styles */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --text-color: #f3f4f6;
+                --bg-color: #111827;
+                --card-bg: #1f2937;
+                --border-color: #374151;
+            }
+        }
+    &lt;/style&gt;
+&lt;/head&gt;
+&lt;body class="bg-gray-50 text-gray-900 dark:bg-gray-900 dark:text-gray-100"&gt;
+    &lt;!-- Navigation --&gt;
+    &lt;nav class="bg-white dark:bg-gray-800 shadow-md"&gt;
+        &lt;div class="container mx-auto px-4 py-3"&gt;
+            &lt;div class="flex justify-between items-center"&gt;
+                &lt;a href="index.html" class="text-xl font-bold text-blue-600 dark:text-blue-400"&gt;Your Blog&lt;/a&gt;
+                &lt;div class="hidden md:flex space-x-6"&gt;
+                    &lt;a href="index.html" class="nav-link"&gt;Home&lt;/a&gt;
+                    &lt;a href="category1.html" class="nav-link"&gt;Category 1&lt;/a&gt;
+                    &lt;a href="category2.html" class="nav-link"&gt;Category 2&lt;/a&gt;
+                    &lt;!-- Add more navigation links as needed --&gt;
+                &lt;/div&gt;
+                &lt;button class="md:hidden mobile-menu-button"&gt;
+                    &lt;i class="fas fa-bars"&gt;&lt;/i&gt;
+                &lt;/button&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/nav&gt;
+
+    &lt;!-- Mobile Menu (hidden by default) --&gt;
+    &lt;div class="md:hidden nav-menu bg-white dark:bg-gray-800 shadow-md"&gt;
+        &lt;a href="index.html" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"&gt;Home&lt;/a&gt;
+        &lt;a href="category1.html" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"&gt;Category 1&lt;/a&gt;
+        &lt;a href="category2.html" class="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-700"&gt;Category 2&lt;/a&gt;
+        &lt;!-- Add more navigation links as needed --&gt;
+    &lt;/div&gt;
+
+    &lt;!-- Main Content --&gt;
+    &lt;main class="container mx-auto px-4 py-8"&gt;
+        &lt;!-- Category tag --&gt;
+        &lt;div class="mb-2"&gt;
+            &lt;span class="inline-block bg-blue-100 text-blue-800 text-sm font-medium px-2.5 py-0.5 rounded dark:bg-blue-900 dark:text-blue-300"&gt;
+                Your Category
+            &lt;/span&gt;
+        &lt;/div&gt;
+        
+        &lt;!-- Post title --&gt;
+        &lt;h1 class="text-3xl font-bold mb-2"&gt;Your Post Title&lt;/h1&gt;
+        
+        &lt;!-- Publication date --&gt;
+        &lt;p class="text-gray-600 dark:text-gray-400 mb-6"&gt;
+            Published on &lt;time datetime="2025-04-06"&gt;April 6, 2025&lt;/time&gt;
+        &lt;/p&gt;
+        
+        &lt;!-- Post content --&gt;
+        &lt;article class="prose lg:prose-xl dark:prose-invert max-w-none"&gt;
+            &lt;p&gt;Your content goes here...&lt;/p&gt;
+            
+            &lt;h2&gt;A Section Heading&lt;/h2&gt;
+            &lt;p&gt;More content...&lt;/p&gt;
+            
+            &lt;!-- Add more content as needed --&gt;
+        &lt;/article&gt;
+    &lt;/main&gt;
+
+    &lt;!-- Footer --&gt;
+    &lt;footer class="bg-gray-100 dark:bg-gray-800 py-6"&gt;
+        &lt;div class="container mx-auto px-4"&gt;
+            &lt;div class="flex flex-col md:flex-row justify-between items-center"&gt;
+                &lt;div class="mb-4 md:mb-0"&gt;
+                    &lt;p&gt;&copy; 2025 Your Blog. All rights reserved.&lt;/p&gt;
+                &lt;/div&gt;
+                &lt;div class="flex space-x-4"&gt;
+                    &lt;a href="#" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"&gt;
+                        &lt;i class="fab fa-twitter"&gt;&lt;/i&gt;
+                    &lt;/a&gt;
+                    &lt;a href="#" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"&gt;
+                        &lt;i class="fab fa-github"&gt;&lt;/i&gt;
+                    &lt;/a&gt;
+                    &lt;a href="#" class="text-gray-600 hover:text-blue-600 dark:text-gray-400 dark:hover:text-blue-400"&gt;
+                        &lt;i class="fab fa-linkedin"&gt;&lt;/i&gt;
+                    &lt;/a&gt;
+                &lt;/div&gt;
+            &lt;/div&gt;
+        &lt;/div&gt;
+    &lt;/footer&gt;
+
+    &lt;!-- Scripts --&gt;
+    &lt;script src="scripts.js"&gt;&lt;/script&gt;
+&lt;/body&gt;
+&lt;/html&gt;</code></pre>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Updating the Navigation</h3>
+        <p class="mb-4">
+            After creating a new page, make sure to update the navigation in all HTML files to include the new page. 
+            Look for the <code>&lt;nav&gt;</code> section in each file.
+        </p>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4" id="design">Modifying the Design</h2>
+        
+        <h3 class="text-xl font-semibold mt-4 mb-2">CSS Variables</h3>
+        <p class="mb-4">
+            The design system uses CSS variables for consistent styling. You can modify these in the <code>&lt;style&gt;</code> section of each HTML file:
+        </p>
+        <pre><code>:root {
+    --primary-color: #3b82f6;    /* Main accent color */
+    --secondary-color: #6366f1;  /* Secondary accent color */
+    --text-color: #1f2937;       /* Main text color */
+    --bg-color: #f9fafb;         /* Background color */
+    --card-bg: #ffffff;          /* Card background color */
+    --border-color: #e5e7eb;     /* Border color */
+    --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+}</code></pre>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Dark Mode</h3>
+        <p class="mb-4">
+            Dark mode is implemented using media queries and CSS variables. You can customize the dark mode appearance:
+        </p>
+        <pre><code>@media (prefers-color-scheme: dark) {
+    :root {
+        --text-color: #f3f4f6;
+        --bg-color: #111827;
+        --card-bg: #1f2937;
+        --border-color: #374151;
+    }
+}</code></pre>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Tailwind Customization</h3>
+        <p class="mb-4">
+            For more advanced customization beyond what CSS variables offer, you can modify Tailwind classes directly in the HTML.
+            Common Tailwind utility classes used in the system:
+        </p>
+        <ul class="list-disc ml-6 mb-6">
+            <li><code>container</code> - Contains content to a max-width</li>
+            <li><code>mx-auto</code> - Centers content horizontally</li>
+            <li><code>px-4 py-6</code> - Padding on x-axis (4) and y-axis (6)</li>
+            <li><code>text-*</code> - Text sizes (xs, sm, base, lg, xl, 2xl, etc.)</li>
+            <li><code>font-*</code> - Font weights (normal, medium, semibold, bold)</li>
+            <li><code>bg-*</code> - Background colors</li>
+            <li><code>text-*</code> - Text colors</li>
+            <li><code>dark:*</code> - Dark mode variants</li>
+        </ul>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4" id="functionality">Customizing Functionality</h2>
+        
+        <h3 class="text-xl font-semibold mt-4 mb-2">JavaScript Overview</h3>
+        <p class="mb-4">
+            The <code>scripts.js</code> file contains all the JavaScript functionality for the blog. It's organized into sections:
+        </p>
+        <ul class="list-disc ml-6 mb-6">
+            <li><code>Common Functionality</code> - Mobile navigation, dark mode, etc.</li>
+            <li><code>Blog Post Filtering</code> - Category and search filtering</li>
+            <li><code>Theme Controls</code> - Color and font customization</li>
+            <li><code>Call Tracker</code> - Call tracking functionality</li>
+            <li><code>Metacognition Journal</code> - Journal functionality</li>
+        </ul>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Adding New Functionality</h3>
+        <p class="mb-4">
+            To add new JavaScript functionality:
+        </p>
+        <ol class="list-decimal ml-6 mb-6 space-y-2">
+            <li>Add a new section to <code>scripts.js</code> with your function</li>
+            <li>Add a condition in the <code>DOMContentLoaded</code> event to initialize your function</li>
+            <li>Add the necessary HTML elements to your page</li>
+        </ol>
+
+        <p class="mb-4">Example of adding new functionality:</p>
+        <pre><code>// In scripts.js
+document.addEventListener('DOMContentLoaded', function() {
+    // Existing code...
+    
+    // Add your condition
+    if (document.querySelector('.your-new-feature')) {
+        initializeYourNewFeature();
+    }
+});
+
+// Add your new function
+function initializeYourNewFeature() {
+    // Your functionality code here
+}</code></pre>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Modifying Existing Functionality</h3>
+        <p class="mb-4">
+            To modify existing functionality, find the relevant section in <code>scripts.js</code> and make your changes.
+            Each major component has its own initialization function that you can modify.
+        </p>
+
+        <h2 class="text-2xl font-semibold mt-8 mb-4" id="media">Working with Media</h2>
+        
+        <h3 class="text-xl font-semibold mt-4 mb-2">Images</h3>
+        <p class="mb-4">
+            Add images to your content using standard HTML:
+        </p>
+        <pre><code>&lt;img src="path/to/your/image.jpg" alt="Description of the image" class="max-w-full h-auto rounded my-4"&gt;</code></pre>
+        <p class="mb-4">
+            <strong>Note:</strong> Avoid using base64 encoded images as they make the HTML file excessively large.
+        </p>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Videos</h3>
+        <p class="mb-4">
+            For embedding videos, especially MP4 files:
+        </p>
+        <pre><code>&lt;video controls playsinline webkit-playsinline class="max-w-full my-4 rounded"&gt;
+    &lt;source src="your_video_url" type="video/mp4"&gt;
+    Your browser does not support the video tag.
+&lt;/video&gt;</code></pre>
+        <p class="mb-4">
+            The <code>playsinline</code> and <code>webkit-playsinline</code> attributes ensure compatibility with both Chrome and Safari.
+        </p>
+
+        <h3 class="text-xl font-semibold mt-4 mb-2">Icons</h3>
+        <p class="mb-4">
+            The system uses Font Awesome for icons, which is included via jsDelivr CDN:
+        </p>
+        <pre><code>&lt;i class="fas fa-home"&gt;&lt;/i&gt;  &lt;!-- Solid icon --&gt;
+&lt;i class="far fa-user"&gt;&lt;/i&gt;  &lt;!-- Regular (outline) icon --&gt;
+&lt;i class="fab fa-twitter"&gt;&lt;/i&gt;  &lt;!-- Brand icon --&gt;</code></pre>
+        <p class="mb-4">
+            <a href="https://fontawesome.com/icons" target="_blank" rel="noopener noreferrer">Browse available Font Awesome icons</a>
+        </p>
+
+        <hr class="my-8 border-gray-300 dark:border-gray-700">
+        
+        <h2 class="text-2xl font-semibold mt-4 mb-2">Need Further Help?</h2>
+        <p class="mb-4">
+            This documentation covers the basics of using and extending the blog system. If you have specific questions or need additional help:
+        </p>
+        <ul class="list-disc ml-6 mb-6">
+            <li>Check the HTML comments in the source files for additional guidance</li>
+            <li>Refer to <a href="https://tailwindcss.com/docs" target="_blank" rel="noopener noreferrer">Tailwind CSS documentation</a> for styling options</li>
+            <li>Explore web development resources for HTML, CSS, and JavaScript fundamentals</li>
+        </ul>
+    </div>
+
+    <footer class="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 py-6">
+        <div class="container mx-auto px-4 text-center">
+            <p>© 2025 Blog System Documentation</p>
+        </div>
+    </footer>
+
+    <script>
+        // Toggle mobile menu
+        const mobileMenuButton = document.querySelector('.mobile-menu-button');
+        const navMenu = document.querySelector('.nav-menu');
+        
+        if (mobileMenuButton && navMenu) {
+            mobileMenuButton.addEventListener('click', function() {
+                navMenu.classList.toggle('hidden');
+            });
+        }
+    </script>
+</body>
+</html>
