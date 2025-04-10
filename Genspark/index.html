@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Blog | Home</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.0.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3b82f6;
+            --secondary-color: #6366f1;
+            --accent-color: #10b981;
+            --text-primary: #1f2937;
+            --text-secondary: #4b5563;
+            --bg-primary: #ffffff;
+            --bg-secondary: #f3f4f6;
+            --header-height: 64px;
+            --font-family: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--font-family);
+            color: var(--text-primary);
+            background-color: var(--bg-primary);
+            line-height: 1.6;
+        }
+
+        .blog-post {
+            border-left: 4px solid transparent;
+            transition: all 0.3s ease;
+        }
+
+        .blog-post:hover {
+            border-left-color: var(--primary-color);
+            background-color: var(--bg-secondary);
+        }
+
+        .category-tag {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .post-date {
+            font-size: 0.875rem;
+            color: var(--text-secondary);
+        }
+
+        .active-nav {
+            color: var(--primary-color);
+            font-weight: 600;
+            border-bottom: 2px solid var(--primary-color);
+        }
+
+        .footer-link:hover {
+            color: var(--primary-color);
+            text-decoration: underline;
+        }
+
+        .dark-mode {
+            --text-primary: #f3f4f6;
+            --text-secondary: #d1d5db;
+            --bg-primary: #1f2937;
+            --bg-secondary: #374151;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-10">
+        <div class="container mx-auto px-4 py-4 flex justify-between items-center">
+            <a href="index.html" class="text-2xl font-bold text-gray-800 flex items-center">
+                <i class="fas fa-pen-fancy mr-2 text-blue-500"></i>
+                <span>ThoughtStream</span>
+            </a>
+            
+            <nav class="hidden md:flex space-x-6">
+                <a href="index.html" class="active-nav py-2">Home</a>
+                <a href="meta-cognition.html" class="hover:text-blue-500 py-2">Metacognition</a>
+                <a href="call-tracker.html" class="hover:text-blue-500 py-2">Call Tracker</a>
+                <a href="smell_of_wet_soil.html" class="hover:text-blue-500 py-2">Petrichor</a>
+                <a href="#" class="hover:text-blue-500 py-2">About</a>
+            </nav>
+            
+            <div class="flex items-center space-x-4">
+                <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-100">
+                    <i class="fas fa-moon text-gray-600"></i>
+                </button>
+                <button class="md:hidden p-2 rounded-full hover:bg-gray-100" id="mobile-menu-button">
+                    <i class="fas fa-bars text-gray-600"></i>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile menu (hidden by default) -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white border-t border-gray-200">
+            <div class="container mx-auto px-4 py-2 space-y-2">
+                <a href="index.html" class="block py-2 px-4 text-blue-500 font-semibold">Home</a>
+                <a href="meta-cognition.html" class="block py-2 px-4 hover:bg-gray-50">Metacognition</a>
+                <a href="call-tracker.html" class="block py-2 px-4 hover:bg-gray-50">Call Tracker</a>
+                <a href="smell_of_wet_soil.html" class="block py-2 px-4 hover:bg-gray-50">Petrichor</a>
+                <a href="#" class="block py-2 px-4 hover:bg-gray-50">About</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-grow container mx-auto px-4 py-8 md:flex">
+        <!-- Blog Posts -->
+        <div class="md:w-3/4 md:pr-8">
+            <h1 class="text-3xl font-bold mb-6 pb-2 border-b border-gray-200">Recent Entries</h1>
+            
+            <!-- Blog Post 1 -->
+            <article class="blog-post mb-8 p-6 bg-white rounded-lg shadow-sm">
+                <div class="flex flex-wrap items-baseline mb-2">
+                    <span class="category-tag mr-3">Philosophy</span>
+                    <span class="post-date">April 2, 2025</span>
+                </div>
+                <h2 class="text-2xl font-semibold mb-3">
+                    <a href="meta-cognition.html" class="hover:text-blue-600 transition-colors">
+                        Metacognition Trainer: Mastermind or Monster?
+                    </a>
+                </h2>
+                <p class="text-gray-600 mb-4">
+                    Explore the power of thinking about your thinking, and how it can transform your decision-making abilities.
+                </p>
+                <a href="meta-cognition.html" class="inline-flex items-center text-blue-500 hover:text-blue-700">
+                    Read more
+                    <i class="fas fa-arrow-right ml-2 text-sm"></i>
+                </a>
+            </article>
+            
+            <!-- Blog Post 2 -->
+            <article class="blog-post mb-8 p-6 bg-white rounded-lg shadow-sm">
+                <div class="flex flex-wrap items-baseline mb-2">
+                    <span class="category-tag mr-3">Tech Projects</span>
+                    <span class="post-date">April 4, 2025</span>
+                </div>
+                <h2 class="text-2xl font-semibold mb-3">
+                    <a href="call-tracker.html" class="hover:text-blue-600 transition-colors">
+                        Call Tracker
+                    </a>
+                </h2>
+                <p class="text-gray-600 mb-4">
+                    Track follow up calls and get reminders when due. A simple tool for managing your communication.
+                </p>
+                <a href="call-tracker.html" class="inline-flex items-center text-blue-500 hover:text-blue-700">
+                    Read more
+                    <i class="fas fa-arrow-right ml-2 text-sm"></i>
+                </a>
+            </article>
+            
+            <!-- Blog Post 3 -->
+            <article class="blog-post mb-8 p-6 bg-white rounded-lg shadow-sm">
+                <div class="flex flex-wrap items-baseline mb-2">
+                    <span class="category-tag mr-3">Observations</span>
+                    <span class="post-date">April 5, 2025</span>
+                </div>
+                <h2 class="text-2xl font-semibold mb-3">
+                    <a href="smell_of_wet_soil.html" class="hover:text-blue-600 transition-colors">
+                        Smell of Wet Soil
+                    </a>
+                </h2>
+                <p class="text-gray-600 mb-4">
+                    Unearthing the science behind petrichor's earthy aroma and why we find it so appealing.
+                </p>
+                <a href="smell_of_wet_soil.html" class="inline-flex items-center text-blue-500 hover:text-blue-700">
+                    Read more
+                    <i class="fas fa-arrow-right ml-2 text-sm"></i>
+                </a>
+            </article>
+        </div>
+        
+        <!-- Sidebar -->
+        <aside class="sidebar md:w-1/4 space-y-8">
+            <!-- Categories -->
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold mb-4 pb-2 border-b border-gray-200">Categories</h2>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-blue-500 font-medium">All Posts</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-blue-500">Philosophy</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-blue-500">Tech Projects</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-blue-500">Observations</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-blue-500">Tutorials</a></li>
+                    <li><a href="#" class="text-gray-600 hover:text-blue-500">Reviews</a></li>
+                </ul>
+            </div>
+            
+            <!-- Newsletter -->
+            <div class="bg-white p-6 rounded-lg shadow-sm">
+                <h2 class="text-xl font-semibold mb-4 pb-2 border-b border-gray-200">Newsletter</h2>
+                <p class="text-gray-600 mb-4">Stay updated with the latest posts and articles. No spam, just weekly insights.</p>
+                <form class="space-y-3">
+                    <div>
+                        <input type="email" placeholder="Your email address" class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                    </div>
+                    <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 transition-colors">
+                        Subscribe
+                    </button>
+                </form>
+            </div>
+        </aside>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white">
+        <div class="container mx-auto px-4 py-8">
+            <div class="md:flex md:justify-between">
+                <div class="mb-6 md:mb-0">
+                    <a href="index.html" class="flex items-center text-2xl font-bold">
+                        <i class="fas fa-pen-fancy mr-2 text-blue-400"></i>
+                        <span>ThoughtStream</span>
+                    </a>
+                    <p class="mt-2 text-gray-400 max-w-md">
+                        A blog exploring ideas across philosophy, technology, and everyday observations.
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-8 md:gap-12">
+                    <div>
+                        <h3 class="text-lg font-semibold mb-3">Navigation</h3>
+                        <ul class="space-y-2">
+                            <li><a href="index.html" class="text-gray-400 hover:text-white footer-link">Home</a></li>
+                            <li><a href="meta-cognition.html" class="text-gray-400 hover:text-white footer-link">Metacognition</a></li>
+                            <li><a href="call-tracker.html" class="text-gray-400 hover:text-white footer-link">Call Tracker</a></li>
+                            <li><a href="smell_of_wet_soil.html" class="text-gray-400 hover:text-white footer-link">Petrichor</a></li>
+                            <li><a href="#" class="text-gray-400 hover:text-white footer-link">About</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h3 class="text-lg font-semibold mb-3">Connect</h3>
+                        <ul class="space-y-2">
+                            <li>
+                                <a href="#" class="text-gray-400 hover:text-white footer-link flex items-center">
+                                    <i class="fab fa-twitter w-5"></i>
+                                    <span>Twitter</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="text-gray-400 hover:text-white footer-link flex items-center">
+                                    <i class="fab fa-github w-5"></i>
+                                    <span>GitHub</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="#" class="text-gray-400 hover:text-white footer-link flex items-center">
+                                    <i class="fab fa-linkedin w-5"></i>
+                                    <span>LinkedIn</span>
+                                </a>
+                            </li>
+                            <li>
+                                <a href="mailto:contact@example.com" class="text-gray-400 hover:text-white footer-link flex items-center">
+                                    <i class="fas fa-envelope w-5"></i>
+                                    <span>Email</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 mt-8 pt-6 flex flex-col md:flex-row md:justify-between md:items-center">
+                <p class="text-gray-400 text-sm">
+                    &copy; 2025 ThoughtStream. All rights reserved.
+                </p>
+                <div class="mt-4 md:mt-0 flex space-x-6">
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" class="text-gray-400 hover:text-white">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Mobile menu toggle
+        document.getElementById('mobile-menu-button').addEventListener('click', function() {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+        
+        // Theme toggle
+        document.getElementById('theme-toggle').addEventListener('click', function() {
+            const body = document.body;
+            const icon = this.querySelector('i');
+            
+            if (body.classList.contains('dark-mode')) {
+                body.classList.remove('dark-mode');
+                icon.classList.remove('fa-sun');
+                icon.classList.add('fa-moon');
+            } else {
+                body.classList.add('dark-mode');
+                icon.classList.remove('fa-moon');
+                icon.classList.add('fa-sun');
+            }
+        });
+    </script>
+</body>
+</html>

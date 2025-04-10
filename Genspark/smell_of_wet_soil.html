@@ -1,0 +1,341 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smell of Wet Soil | Personal Blog</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #3a7563;
+            --color-primary-light: #4a8c79;
+            --color-primary-dark: #2a5c49;
+            --color-secondary: #e6b17e;
+            --color-text: #333333;
+            --color-text-light: #666666;
+            --color-background: #f8f7f3;
+            --color-card: #ffffff;
+            --color-border: #e2e2d5;
+            --font-family: 'Inter', sans-serif;
+        }
+        
+        body {
+            font-family: var(--font-family);
+            background-color: var(--color-background);
+            color: var(--color-text);
+            line-height: 1.6;
+        }
+        
+        .header {
+            background-color: var(--color-primary);
+            color: white;
+        }
+        
+        .logo {
+            color: white;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .nav-link {
+            color: rgba(255, 255, 255, 0.9);
+            transition: all 0.2s;
+        }
+        
+        .nav-link:hover {
+            color: var(--color-secondary);
+        }
+        
+        .nav-link.active {
+            color: var(--color-secondary);
+            font-weight: 600;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1rem;
+        }
+        
+        .article-card {
+            background-color: var(--color-card);
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+        
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        
+        .btn-primary:hover {
+            background-color: var(--color-primary-dark);
+        }
+        
+        .category-badge {
+            background-color: var(--color-secondary);
+            color: var(--color-text);
+            font-size: 0.75rem;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+        
+        h1, h2, h3, h4, h5, h6 {
+            color: var(--color-primary-dark);
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 600;
+        }
+        
+        h2 {
+            font-size: 1.75rem;
+        }
+        
+        h3 {
+            font-size: 1.5rem;
+        }
+        
+        p {
+            margin-bottom: 1.2rem;
+        }
+        
+        blockquote {
+            border-left: 4px solid var(--color-secondary);
+            padding-left: 1rem;
+            font-style: italic;
+            color: var(--color-text-light);
+            margin: 1.5rem 0;
+        }
+        
+        .footer {
+            background-color: var(--color-primary-dark);
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        /* Earth-themed styles specific to this page */
+        .earthy-section {
+            border-left: 3px solid #8d6e63;
+            padding-left: 1rem;
+            margin: 1.5rem 0;
+            background-color: rgba(141, 110, 99, 0.05);
+            padding: 1rem;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .molecule-visualization {
+            background-color: #f1f8e9;
+            border-radius: 8px;
+            padding: 1.5rem;
+            text-align: center;
+            margin: 2rem 0;
+            border: 1px dashed #558b2f;
+        }
+
+        @media (max-width: 640px) {
+            .mobile-menu {
+                display: none;
+            }
+            
+            .mobile-menu.active {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header py-4 px-4 sm:px-6">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="index.html" class="logo text-xl">Personal Blog</a>
+            
+            <!-- Desktop Navigation -->
+            <nav class="hidden sm:block">
+                <ul class="flex space-x-6">
+                    <li><a href="index.html" class="nav-link">Home</a></li>
+                    <li><a href="meta-cognition.html" class="nav-link">Metacognition</a></li>
+                    <li><a href="call-tracker.html" class="nav-link">Call Tracker</a></li>
+                    <li><a href="smell_of_wet_soil.html" class="nav-link active">Petrichor</a></li>
+                </ul>
+            </nav>
+            
+            <!-- Mobile Menu Toggle -->
+            <button id="mobile-menu-button" class="sm:hidden text-white">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+        
+        <!-- Mobile Navigation -->
+        <div id="mobile-menu" class="mobile-menu sm:hidden mt-4 container mx-auto">
+            <ul class="flex flex-col space-y-3">
+                <li><a href="index.html" class="nav-link block">Home</a></li>
+                <li><a href="meta-cognition.html" class="nav-link block">Metacognition</a></li>
+                <li><a href="call-tracker.html" class="nav-link block">Call Tracker</a></li>
+                <li><a href="smell_of_wet_soil.html" class="nav-link active block">Petrichor</a></li>
+            </ul>
+        </div>
+    </header>
+    
+    <main class="container mx-auto py-8 px-4">
+        <div class="article-card p-6 md:p-8">
+            <div class="mb-6">
+                <span class="category-badge">Observations</span>
+                <h1 class="text-3xl md:text-4xl font-bold text-gray-800 mb-2">That Fresh Earth Scent</h1>
+                <p class="text-gray-600">Published on April 5, 2025</p>
+            </div>
+            
+            <article class="prose max-w-none">
+                <p>
+                    Almost everyone recognizes the pleasant, earthy smell that fills the air after a light spring rain or when digging in a garden. This distinctive scent, often called 'petrichor', isn't just from the water itself. It's a complex blend of compounds, with a major contribution coming from tiny organisms living right beneath our feet.
+                </p>
+                
+                <h2>The Microbial Perfumers: Streptomyces</h2>
+                <div class="earthy-section">
+                    <p>
+                        The primary culprits behind the characteristic earthy smell are bacteria belonging to the genus Streptomyces. These filamentous bacteria are incredibly common in healthy soils worldwide. They thrive in damp conditions and play a crucial role in decomposing organic matter.
+                    </p>
+                    <p>
+                        As part of their life cycle, especially when they form spores, Streptomyces produce volatile organic compounds (VOCs). When raindrops hit dry soil, they aerosolize these compounds, releasing them into the air for us to smell.
+                    </p>
+                </div>
+                
+                <h2>The Aromatic Molecules: Geosmin & 2-MIB</h2>
+                <p>
+                    Two key compounds produced by Streptomyces (and some cyanobacteria and fungi) are responsible for the signature scent:
+                </p>
+                <ul class="list-disc pl-6 space-y-2 my-4">
+                    <li>
+                        <strong>Geosmin:</strong> (Greek for "earth smell") This bicyclic alcohol has an intensely earthy, musty odor. It's the dominant contributor to the smell we associate with freshly tilled soil or beetroot.
+                    </li>
+                    <li>
+                        <strong>2-Methylisoborneol (2-MIB):</strong> This compound contributes a similar earthy, camphor-like, musty note. Often found alongside geosmin, it adds complexity to the overall aroma.
+                    </li>
+                </ul>
+                <p>
+                    Humans are extraordinarily sensitive to these compounds, able to detect geosmin at concentrations as low as a few parts per trillion!
+                </p>
+                
+                <div class="bg-yellow-50 p-4 border-l-4 border-yellow-400 my-6">
+                    <h3 class="text-lg font-medium text-yellow-800">Fun Fact: Survival Smell?</h3>
+                    <p class="text-yellow-700 mb-0">
+                        Why are we so sensitive to geosmin? One theory suggests that for our ancestors, the smell of geosmin indicated the presence of fresh water, a vital resource, especially in arid environments. The scent signaled recent rainfall and potentially drinkable water sources.
+                    </p>
+                </div>
+                
+                <h2>Ecological Significance</h2>
+                <p>
+                    The production of geosmin and 2-MIB isn't just for our olfactory pleasure. It serves ecological purposes:
+                </p>
+                <ul class="list-disc pl-6 space-y-2 my-4">
+                    <li>
+                        <strong>Signaling Spore Dispersal:</strong> The scent attracts certain soil-dwelling arthropods, like springtails. These tiny creatures consume the Streptomyces bacteria and inadvertently help disperse their spores to new locations as they travel through the soil or are carried by wind/water.
+                    </li>
+                    <li>
+                        <strong>Indicator of Soil Health:</strong> The presence of these compounds indicates active microbial decomposition, a key part of nutrient cycling in healthy ecosystems. Streptomyces help break down complex organic matter, making nutrients available for plants.
+                    </li>
+                    <li>
+                        <strong>Potential Defense:</strong> While attractive to some organisms, geosmin might repel others, potentially protecting the bacteria from certain predators or competitors.
+                    </li>
+                </ul>
+                
+                <div class="molecule-visualization">
+                    <h3>Experience the Science</h3>
+                    <p>While we can't bottle the actual scent here, imagine the complex molecular dance that creates this unforgettable aroma!</p>
+                    <button class="btn-primary mt-2">
+                        <i class="fas fa-microscope mr-2"></i> Visualize Molecules
+                    </button>
+                </div>
+            </article>
+            
+            <div class="mt-8 pt-6 border-t border-gray-200">
+                <div class="flex items-center space-x-4">
+                    <span class="text-gray-600">Share this article:</span>
+                    <a href="#" class="text-blue-500 hover:text-blue-700">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-blue-800 hover:text-blue-900">
+                        <i class="fab fa-facebook-f"></i>
+                    </a>
+                    <a href="#" class="text-green-600 hover:text-green-700">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        
+        <div class="mt-8">
+            <h3 class="text-xl font-semibold mb-4">Related Articles</h3>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <a href="meta-cognition.html" class="article-card p-4 hover:shadow-md transition-shadow">
+                    <span class="category-badge">Philosophy</span>
+                    <h4 class="font-semibold text-lg mb-2">Metacognition Trainer: Mastermind or Monster?</h4>
+                    <p class="text-gray-600 text-sm">April 2, 2025</p>
+                </a>
+                
+                <a href="call-tracker.html" class="article-card p-4 hover:shadow-md transition-shadow">
+                    <span class="category-badge">Tech Projects</span>
+                    <h4 class="font-semibold text-lg mb-2">Call Tracker</h4>
+                    <p class="text-gray-600 text-sm">April 4, 2025</p>
+                </a>
+            </div>
+        </div>
+    </main>
+    
+    <footer class="footer py-8 px-4">
+        <div class="container mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center">
+                <div class="mb-6 md:mb-0">
+                    <h3 class="text-white text-lg font-semibold mb-2">Personal Blog</h3>
+                    <p class="text-gray-300 text-sm">Exploring ideas, technology, and observations</p>
+                </div>
+                
+                <div class="flex space-x-4">
+                    <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                    <a href="#" class="text-gray-300 hover:text-white transition-colors">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+            </div>
+            
+            <div class="mt-8 pt-6 border-t border-gray-700 text-center text-gray-400 text-sm">
+                &copy; 2025 Personal Blog. All rights reserved.
+            </div>
+        </div>
+    </footer>
+    
+    <script>
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+        });
+        
+        // Molecule visualization button (placeholder functionality)
+        const visualizeButton = document.querySelector('.molecule-visualization button');
+        if (visualizeButton) {
+            visualizeButton.addEventListener('click', () => {
+                alert('Molecule visualization would appear here in a complete implementation!');
+            });
+        }
+    </script>
+</body>
+</html>
