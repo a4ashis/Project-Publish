@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paddy Weight Report</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            position: relative;
+        }
+        .watermark {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            pointer-events: none;
+            z-index: -1;
+            opacity: 0.08;
+            transform: rotate(-30deg);
+            font-size: 3rem;
+            font-weight: bold;
+            color: #4a5568;
+        }
+        @media print {
+            .no-print {
+                display: none !important;
+            }
+            .watermark {
+                position: fixed;
+                opacity: 0.1;
+            }
+            table {
+                page-break-inside: avoid;
+            }
+            .district-section {
+                page-break-inside: avoid;
+            }
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+        }
+        th, td {
+            border: 1px solid #e2e8f0;
+            padding: 8px 12px;
+            text-align: left;
+        }
+        th {
+            background-color: #f8fafc;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+        .summary-box {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.375rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .district-section {
+            margin-bottom: 2rem;
+            break-inside: avoid;
+        }
+        .district-header {
+            cursor: pointer;
+            padding: 0.75rem;
+            border-radius: 0.375rem;
+            background-color: #f3f4f6;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 p-8">
+    <div class="watermark" id="watermark">
+        https://whatsapp.com/channel/0029VbAYoywFXUubkL7n8B2L
+    </div>
+
+    <div class="container mx-auto bg-white shadow-lg rounded-lg p-6 relative z-10">
+        <header class="mb-6">
+            <h1 class="text-3xl font-bold text-center text-gray-800 mb-2">Paddy Weight Report</h1>
+            <p class="text-center text-gray-600">Summary of Received Paddy Sub Variety Weights by District and Sangrahan Kendra</p>
+        </header>
+
+        <div class="mb-6 no-print">
+            <div class="flex flex-wrap justify-between items-center">
+                <div class="mb-4 md:mb-0">
+                    <label for="districtFilter" class="block text-sm font-medium text-gray-700 mb-1">Filter by District:</label>
+                    <select id="districtFilter" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5">
+                        <option value="all">All Districts</option>
+                    </select>
+                </div>
+                
+                <div class="flex space-x-2">
+                    <button id="downloadAll" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
+                        <i class="fas fa-download mr-2"></i> Download Full Report
+                    </button>
+                    <button id="downloadFiltered" class="bg-green-600 hover:bg-green-700 text-white font-medium py-2 px-4 rounded-lg flex items-center">
+                        <i class="fas fa-download mr-2"></i> Download District Report
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-8">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">Summary Statistics</h2>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="summary-box bg-blue-50">
+                    <h3 class="font-bold text-blue-800">MOTA Variety</h3>
+                    <p class="text-2xl font-bold text-blue-600 mt-2" id="motaTotal">0</p>
+                    <p class="text-sm text-blue-600">Total Weight Received</p>
+                </div>
+                <div class="summary-box bg-green-50">
+                    <h3 class="font-bold text-green-800">PATLA Variety</h3>
+                    <p class="text-2xl font-bold text-green-600 mt-2" id="patlaTotal">0</p>
+                    <p class="text-sm text-green-600">Total Weight Received</p>
+                </div>
+                <div class="summary-box bg-purple-50">
+                    <h3 class="font-bold text-purple-800">SARNA Variety</h3>
+                    <p class="text-2xl font-bold text-purple-600 mt-2" id="sarnaTotal">0</p>
+                    <p class="text-sm text-purple-600">Total Weight Received</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="allDistrictsView">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">All Districts Report</h2>
+            <div class="table-container">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th>District</th>
+                            <th>Sangrahan Kendra</th>
+                            <th>Date</th>
+                            <th>MOTA</th>
+                            <th>PATLA</th>
+                            <th>SARNA</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="reportTableBody">
+                        <!-- Table data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="districtView" class="hidden">
+            <h2 class="text-xl font-semibold mb-4 text-gray-800">District Report: <span id="districtName"></span></h2>
+            <div class="table-container">
+                <table class="w-full">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th>Sangrahan Kendra</th>
+                            <th>Date</th>
+                            <th>MOTA</th>
+                            <th>PATLA</th>
+                            <th>SARNA</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="districtTableBody">
+                        <!-- District data will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div id="districtSections" class="mt-8">
+            <!-- Individual district sections will be populated here -->
+        </div>
+
+        <footer class="mt-8 pt-6 border-t border-gray-200 text-center text-gray-600">
+            <p>© 2023 Paddy Weight Report. All rights reserved.</p>
+            <p class="mt-1">WhatsApp Channel: <a href="https://whatsapp.com/channel/0029VbAYoywFXUubkL7n8B2L" class="text-blue-600 hover:underline" target="_blank">https://whatsapp.com/channel/0029VbAYoywFXUubkL7n8B2L</a></p>
+        </footer>
+    </div>
+
+    <script>
+        const paddyData = [
+            { district: "Balod", center: "Dhobanpuri", date: "23-04-25", mota: 186157, patla: 114221, sarna: 375128 },
+            { district: "Balod", center: "Jagatara phad", date: "19-04-25", mota: 343428, patla: 373581, sarna: 191662 },
+            { district: "Balod", center: "Malighori", date: "21-04-25", mota: 134108, patla: 74948, sarna: 204867 },
+            { district: "Balod", center: "Phundabhata", date: "21-04-25", mota: 197887, patla: 147571, sarna: 263172 },
+            { district: "Baloda Bazar", center: "Bhatapara", date: "23-04-25", mota: 0, patla: 0, sarna: 293283 },
+            { district: "Baloda Bazar", center: "Duldula", date: "23-04-25", mota: 0, patla: 0, sarna: 238839 },
+            { district: "Baloda Bazar", center: "Hathbandh", date: "17-04-25", mota: 0, patla: 0, sarna: 951806 },
+            { district: "Baloda Bazar", center: "Kasdol", date: "23-04-25", mota: 0, patla: 0, sarna: 126488 },
+            { district: "Balrampur", center: "Dakva", date: "22-04-25", mota: 336139, patla: 0, sarna: 0 },
+            { district: "Balrampur", center: "Gamhariya", date: "22-04-25", mota: 223357, patla: 0, sarna: 0 },
+            { district: "Balrampur", center: "Rajpur samiti Parisar", date: "22-04-25", mota: 141536, patla: 0, sarna: 0 },
+            { district: "Bastar", center: "Chotedevda", date: "22-04-25", mota: 489278, patla: 0, sarna: 0 },
+            { district: "Bastar", center: "Jagdalpur", date: "22-04-25", mota: 417527, patla: 0, sarna: 0 },
+            { district: "Bastar", center: "Niyanar", date: "22-04-25", mota: 476063, patla: 0, sarna: 0 },
+            { district: "Bastar", center: "Shivani", date: "22-04-25", mota: 479534, patla: 0, sarna: 0 },
+            { district: "Bemetara", center: "Lenjwara (sarda)", date: "19-04-25", mota: 93578, patla: 0, sarna: 1176617 },
+            { district: "Bijapur", center: "Jangla", date: "22-04-25", mota: 19548, patla: 0, sarna: 0 },
+            { district: "Bilaspur", center: "Bharnibhata", date: "22-04-25", mota: 347733, patla: 0, sarna: 43196 },
+            { district: "Bilaspur", center: "Bilha", date: "22-04-25", mota: 292125, patla: 0, sarna: 155560 },
+            { district: "Bilaspur", center: "Kargikala", date: "22-04-25", mota: 176380, patla: 0, sarna: 0 },
+            { district: "Bilaspur", center: "Mopka", date: "22-04-25", mota: 257886, patla: 0, sarna: 67200 },
+            { district: "Dantewada", center: "Gidam", date: "22-04-25", mota: 124330, patla: 0, sarna: 0 },
+            { district: "Dhamtari", center: "Bhatagaon (kurud )", date: "21-04-25", mota: 434205, patla: 152035, sarna: 126816 },
+            { district: "Dhamtari", center: "Bhoyna", date: "21-04-25", mota: 473416, patla: 78968, sarna: 13165 },
+            { district: "Dhamtari", center: "Bhoyna (janvargaav)", date: "21-04-25", mota: 246564, patla: 26271, sarna: 141248 },
+            { district: "Dhamtari", center: "Chitoud", date: "21-04-25", mota: 651966, patla: 17905, sarna: 96975 },
+            { district: "Durg", center: "Arasnara", date: "23-04-25", mota: 53890, patla: 35620, sarna: 227906 },
+            { district: "Durg", center: "Jevara sirsa", date: "19-04-25", mota: 11807, patla: 36634, sarna: 228365 },
+            { district: "Durg", center: "Kaudiya", date: "19-04-25", mota: 73947, patla: 26107, sarna: 104217 },
+            { district: "Durg", center: "Selud phad", date: "21-04-25", mota: 21528, patla: 58521, sarna: 832587 },
+            { district: "Gariyaband", center: "Kundelbhata", date: "17-04-25", mota: 1864806, patla: 0, sarna: 268146 },
+            { district: "GAURELA PENDRA MARWAHI", center: "Gullidand", date: "22-04-25", mota: 70304, patla: 0, sarna: 0 },
+            { district: "GAURELA PENDRA MARWAHI", center: "Pendrarod", date: "22-04-25", mota: 98388, patla: 0, sarna: 0 },
+            { district: "Janjgir Champa", center: "Amartal (akaltara)", date: "21-04-25", mota: 33600, patla: 0, sarna: 243598 },
+            { district: "Janjgir Champa", center: "Shaskiya bhumi akaltara", date: "21-04-25", mota: 72000, patla: 0, sarna: 675367 },
+            { district: "Jashpur", center: "Pathalgaav", date: "22-04-25", mota: 242819, patla: 0, sarna: 0 },
+            { district: "Kanker", center: "Kanker", date: "22-04-25", mota: 160838, patla: 0, sarna: 0 },
+            { district: "Kanker", center: "Kanker 2", date: "22-04-25", mota: 584583, patla: 0, sarna: 0 },
+            { district: "Kanker", center: "Lakhanpuri", date: "22-04-25", mota: 386154, patla: 0, sarna: 0 },
+            { district: "Kawardha", center: "Bagharra", date: "22-04-25", mota: 20052, patla: 30282, sarna: 101762 },
+            { district: "Kawardha", center: "Bajar charbhatha", date: "19-04-25", mota: 132513, patla: 102708, sarna: 273947 },
+            { district: "khairagarh chhuikhadan gandai", center: "Bhauthi", date: "19-04-25", mota: 1190, patla: 14077, sarna: 91726 },
+            { district: "khairagarh chhuikhadan gandai", center: "Ghotiya", date: "19-04-25", mota: 10769, patla: 69213, sarna: 255343 },
+            { district: "khairagarh chhuikhadan gandai", center: "Madurakuhi", date: "19-04-25", mota: 1200, patla: 21548, sarna: 92180 },
+            { district: "khairagarh chhuikhadan gandai", center: "Thelkadih", date: "19-04-25", mota: 8372, patla: 10727, sarna: 96785 },
+            { district: "khairagarh chhuikhadan gandai", center: "Bhauthi", date: "19-04-25", mota: 4714, patla: 19968, sarna: 132970 },
+            { district: "khairagarh chhuikhadan gandai", center: "Ghotiya", date: "19-04-25", mota: 13192, patla: 102542, sarna: 366349 },
+            { district: "khairagarh chhuikhadan gandai", center: "Madurakuhi", date: "19-04-25", mota: 1200, patla: 31134, sarna: 134081 },
+            { district: "khairagarh chhuikhadan gandai", center: "Thelkadih", date: "19-04-25", mota: 11891, patla: 14332, sarna: 139835 },
+            { district: "Kondagaon", center: "Joba", date: "22-04-25", mota: 575915, patla: 0, sarna: 0 },
+            { district: "Kondagaon", center: "Kondagaon", date: "22-04-25", mota: 96504, patla: 0, sarna: 0 },
+            { district: "Koriya", center: "Badgaav", date: "22-04-25", mota: 118563, patla: 0, sarna: 0 },
+            { district: "Mahasamund", center: "Bagbahara", date: "23-04-25", mota: 462433, patla: 0, sarna: 34430 },
+            { district: "Mahasamund", center: "Basna", date: "23-04-25", mota: 261565, patla: 0, sarna: 83430 },
+            { district: "Mahasamund", center: "Mahasamund", date: "17-04-25", mota: 367543, patla: 0, sarna: 340696 },
+            { district: "Mahasamund", center: "Pithaura", date: "19-04-25", mota: 250818, patla: 0, sarna: 2400 },
+            { district: "Mahasamund", center: "Saraypali", date: "23-04-25", mota: 431700, patla: 0, sarna: 33460 },
+            { district: "Mungeli", center: "Hathakera", date: "22-04-25", mota: 87423, patla: 0, sarna: 58677 },
+            { district: "Mungeli", center: "Lorami", date: "22-04-25", mota: 93332, patla: 0, sarna: 75464 },
+            { district: "Narayanpur", center: "Bakulavahi", date: "22-04-25", mota: 78663, patla: 0, sarna: 0 },
+            { district: "Raigarh", center: "Kharsiya", date: "21-04-25", mota: 104107, patla: 0, sarna: 51543 },
+            { district: "Raigarh", center: "Midical college gram loharsingh", date: "21-04-25", mota: 571359, patla: 0, sarna: 194340 },
+            { district: "Raipur", center: "Baktara (mandirhasaud)", date: "23-04-25", mota: 199587, patla: 0, sarna: 0 },
+            { district: "Raipur", center: "Jaunda (rajim)", date: "19-04-25", mota: 332443, patla: 13072, sarna: 1307009 },
+            { district: "Raipur", center: "Kurudabhata (lakhauli)", date: "23-04-25", mota: 3487, patla: 54426, sarna: 0 },
+            { district: "Raipur", center: "Tilda", date: "17-04-25", mota: 684879, patla: 375370, sarna: 1424568 },
+            { district: "Rajnandgaon", center: "abhata (lakshminagarghughava sal", date: "19-04-25", mota: 168180, patla: 227613, sarna: 127797 },
+            { district: "Rajnandgaon", center: "Bandhabajar (sevataTola)", date: "23-04-25", mota: 170746, patla: 172870, sarna: 116964 },
+            { district: "Rajnandgaon", center: "Kalkasa", date: "23-04-25", mota: 107669, patla: 67859, sarna: 164857 },
+            { district: "Rajnandgaon", center: "Singhola", date: "23-04-25", mota: 78542, patla: 29762, sarna: 204578 },
+            { district: "sakti", center: "Bodasagar (shero)", date: "23-04-25", mota: 306000, patla: 0, sarna: 380400 },
+            { district: "sakti", center: "Mandi prangan sakti", date: "23-04-25", mota: 402000, patla: 0, sarna: 144000 },
+            { district: "sakti", center: "Shaskiya bhoomi dabhara", date: "23-04-25", mota: 120000, patla: 0, sarna: 181200 },
+            { district: "sarangarh bilaigarh", center: "Baramkela", date: "23-04-25", mota: 49199, patla: 0, sarna: 86307 },
+            { district: "sarangarh bilaigarh", center: "Hardi", date: "17-04-25", mota: 427512, patla: 0, sarna: 516506 },
+            { district: "sarangarh bilaigarh", center: "TCPC sarangarh", date: "23-04-25", mota: 23820, patla: 0, sarna: 256847 },
+            { district: "Sarguja", center: "Ambikapur (chikhalidih)", date: "23-04-25", mota: 563815, patla: 0, sarna: 0 },
+            { district: "Sarguja", center: "Sitapur", date: "22-04-25", mota: 358518, patla: 0, sarna: 0 },
+            { district: "Sukma", center: "Shaskiya bhumi sukma", date: "22-04-25", mota: 241948, patla: 0, sarna: 0 },
+            { district: "Surajpur", center: "Ramnagar (kumda bit)", date: "21-04-25", mota: 727845, patla: 0, sarna: 0 },
+            { district: "Surajpur", center: "Surajpur (devnagar)", date: "21-04-25", mota: 219129, patla: 0, sarna: 0 }
+        ];
+
+        // Initialize the page
+        document.addEventListener('DOMContentLoaded', function() {
+            populateDistrictFilter();
+            populateDataTable();
+            populateDistrictSections();
+            calculateTotals();
+            setupEventListeners();
+        });
+
+        // Format number with commas
+        function formatNumber(num) {
+            if (num === 0) return '-';
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        }
+
+        // Populate district filter dropdown
+        function populateDistrictFilter() {
+            const districtSelect = document.getElementById('districtFilter');
+            const districts = [...new Set(paddyData.map(item => item.district))].sort();
+            
+            districts.forEach(district => {
+                const option = document.createElement('option');
+                option.value = district;
+                option.textContent = district;
+                districtSelect.appendChild(option);
+            });
+        }
+
+        // Populate main data table
+        function populateDataTable() {
+            const tableBody = document.getElementById('reportTableBody');
+            tableBody.innerHTML = '';
+            
+            paddyData.forEach(item => {
+                const row = document.createElement('tr');
+                const total = (item.mota || 0) + (item.patla || 0) + (item.sarna || 0);
+                
+                row.innerHTML = `
+                    <td>${item.district}</td>
+                    <td>${item.center}</td>
+                    <td>${item.date}</td>
+                    <td class="text-right">${formatNumber(item.mota)}</td>
+                    <td class="text-right">${formatNumber(item.patla)}</td>
+                    <td class="text-right">${formatNumber(item.sarna)}</td>
+                    <td class="text-right font-semibold">${formatNumber(total)}</td>
+                `;
+                
+                tableBody.appendChild(row);
+            });
+        }
+
+        // Populate individual district sections
+        function populateDistrictSections() {
+            const districtSections = document.getElementById('districtSections');
+            districtSections.innerHTML = '';
+            
+            const districts = [...new Set(paddyData.map(item => item.district))].sort();
+            
+            districts.forEach(district => {
+                const districtData = paddyData.filter(item => item.district === district);
+                
+                const section = document.createElement('div');
+                section.className = 'district-section mb-8';
+                section.id = `district-${district.replace(/\s+/g, '-').toLowerCase()}`;
+                
+                // Calculate district totals
+                let districtMota = 0;
+                let districtPatla = 0;
+                let districtSarna = 0;
+                
+                districtData.forEach(item => {
+                    districtMota += item.mota || 0;
+                    districtPatla += item.patla || 0;
+                    districtSarna += item.sarna || 0;
+                });
+                
+                const districtTotal = districtMota + districtPatla + districtSarna;
+                
+                // Create district header
+                const header = document.createElement('div');
+                header.className = 'district-header flex justify-between items-center';
+                header.innerHTML = `
+                    <h3 class="text-lg font-semibold text-gray-800">${district}</h3>
+                    <div class="text-right">
+                        <span class="text-sm text-gray-600">Total: </span>
+                        <span class="font-semibold">${formatNumber(districtTotal)}</span>
+                    </div>
+                `;
+                
+                // Create district table
+                const tableContainer = document.createElement('div');
+                tableContainer.className = 'table-container mt-2';
+                tableContainer.innerHTML = `
+                    <table class="w-full">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th>Sangrahan Kendra</th>
+                                <th>Date</th>
+                                <th>MOTA</th>
+                                <th>PATLA</th>
+                                <th>SARNA</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${districtData.map(item => {
+                                const total = (item.mota || 0) + (item.patla || 0) + (item.sarna || 0);
+                                return `
+                                    <tr>
+                                        <td>${item.center}</td>
+                                        <td>${item.date}</td>
+                                        <td class="text-right">${formatNumber(item.mota)}</td>
+                                        <td class="text-right">${formatNumber(item.patla)}</td>
+                                        <td class="text-right">${formatNumber(item.sarna)}</td>
+                                        <td class="text-right font-semibold">${formatNumber(total)}</td>
+                                    </tr>
+                                `;
+                            }).join('')}
+                        </tbody>
+                        <tfoot>
+                            <tr class="bg-gray-100 font-semibold">
+                                <td colspan="2" class="text-right">District Total:</td>
+                                <td class="text-right">${formatNumber(districtMota)}</td>
+                                <td class="text-right">${formatNumber(districtPatla)}</td>
+                                <td class="text-right">${formatNumber(districtSarna)}</td>
+                                <td class="text-right">${formatNumber(districtTotal)}</td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                `;
+                
+                section.appendChild(header);
+                section.appendChild(tableContainer);
+                districtSections.appendChild(section);
+            });
+        }
+
+        // Calculate and display totals
+        function calculateTotals() {
+            let motaTotal = 0;
+            let patlaTotal = 0;
+            let sarnaTotal = 0;
+            
+            paddyData.forEach(item => {
+                motaTotal += item.mota || 0;
+                patlaTotal += item.patla || 0;
+                sarnaTotal += item.sarna || 0;
+            });
+            
+            document.getElementById('motaTotal').textContent = formatNumber(motaTotal);
+            document.getElementById('patlaTotal').textContent = formatNumber(patlaTotal);
+            document.getElementById('sarnaTotal').textContent = formatNumber(sarnaTotal);
+        }
+
+        // Filter data by district
+        function filterByDistrict(district) {
+            if (district === 'all') {
+                document.getElementById('allDistrictsView').classList.remove('hidden');
+                document.getElementById('districtView').classList.add('hidden');
+                
+                // Show all district sections
+                document.querySelectorAll('.district-section').forEach(section => {
+                    section.classList.remove('hidden');
+                });
+            } else {
+                document.getElementById('allDistrictsView').classList.add('hidden');
+                document.getElementById('districtView').classList.remove('hidden');
+                
+                // Update district name
+                document.getElementById('districtName').textContent = district;
+                
+                // Populate district table
+                const districtTableBody = document.getElementById('districtTableBody');
+                districtTableBody.innerHTML = '';
+                
+                const districtData = paddyData.filter(item => item.district === district);
+                
+                let districtMota = 0;
+                let districtPatla = 0;
+                let districtSarna = 0;
+                
+                districtData.forEach(item => {
+                    const row = document.createElement('tr');
+                    const total = (item.mota || 0) + (item.patla || 0) + (item.sarna || 0);
+                    
+                    row.innerHTML = `
+                        <td>${item.center}</td>
+                        <td>${item.date}</td>
+                        <td class="text-right">${formatNumber(item.mota)}</td>
+                        <td class="text-right">${formatNumber(item.patla)}</td>
+                        <td class="text-right">${formatNumber(item.sarna)}</td>
+                        <td class="text-right font-semibold">${formatNumber(total)}</td>
+                    `;
+                    
+                    districtTableBody.appendChild(row);
+                    
+                    districtMota += item.mota || 0;
+                    districtPatla += item.patla || 0;
+                    districtSarna += item.sarna || 0;
+                });
+                
+                // Add district total row
+                const totalRow = document.createElement('tr');
+                totalRow.className = 'bg-gray-100 font-semibold';
+                const districtTotal = districtMota + districtPatla + districtSarna;
+                
+                totalRow.innerHTML = `
+                    <td colspan="2" class="text-right">District Total:</td>
+                    <td class="text-right">${formatNumber(districtMota)}</td>
+                    <td class="text-right">${formatNumber(districtPatla)}</td>
+                    <td class="text-right">${formatNumber(districtSarna)}</td>
+                    <td class="text-right">${formatNumber(districtTotal)}</td>
+                `;
+                
+                districtTableBody.appendChild(totalRow);
+                
+                // Hide all district sections except the selected one
+                document.querySelectorAll('.district-section').forEach(section => {
+                    if (section.id === `district-${district.replace(/\s+/g, '-').toLowerCase()}`) {
+                        section.classList.remove('hidden');
+                    } else {
+                        section.classList.add('hidden');
+                    }
+                });
+            }
+        }
+
+        // Set up event listeners
+        function setupEventListeners() {
+            // District filter change event
+            document.getElementById('districtFilter').addEventListener('change', function() {
+                filterByDistrict(this.value);
+            });
+            
+            // Download buttons
+            document.getElementById('downloadAll').addEventListener('click', function() {
+                generateCSV('all');
+            });
+            
+            document.getElementById('downloadFiltered').addEventListener('click', function() {
+                const selectedDistrict = document.getElementById('districtFilter').value;
+                if (selectedDistrict === 'all') {
+                    alert('Please select a specific district to download.');
+                } else {
+                    generateCSV(selectedDistrict);
+                }
+            });
+        }
+
+        // Generate and download CSV
+        function generateCSV(filterType) {
+            let data;
+            let filename;
+            
+            if (filterType === 'all') {
+                data = paddyData;
+                filename = 'Paddy_Weight_Report_All_Districts.csv';
+            } else {
+                data = paddyData.filter(item => item.district === filterType);
+                filename = `Paddy_Weight_Report_${filterType.replace(/\s+/g, '_')}.csv`;
+            }
+            
+            // CSV header
+            let csvContent = 'District,Sangrahan Kendra,Date,MOTA,PATLA,SARNA,Total\n';
+            
+            // Add rows
+            data.forEach(item => {
+                const total = (item.mota || 0) + (item.patla || 0) + (item.sarna || 0);
+                csvContent += `${item.district},${item.center},${item.date},${item.mota || 0},${item.patla || 0},${item.sarna || 0},${total}\n`;
+            });
+            
+            // Calculate totals
+            let motaTotal = 0;
+            let patlaTotal = 0;
+            let sarnaTotal = 0;
+            
+            data.forEach(item => {
+                motaTotal += item.mota || 0;
+                patlaTotal += item.patla || 0;
+                sarnaTotal += item.sarna || 0;
+            });
+            
+            const grandTotal = motaTotal + patlaTotal + sarnaTotal;
+            
+            // Add total row
+            csvContent += `TOTAL,,,,${motaTotal},${patlaTotal},${sarnaTotal},${grandTotal}\n`;
+            
+            // Create download link
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.setAttribute('hidden', '');
+            a.setAttribute('href', url);
+            a.setAttribute('download', filename);
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+    </script>
+</body>
+</html>
