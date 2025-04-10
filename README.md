@@ -1,4 +1,4 @@
-# Metacognition Trainer: Mastermind or Monster?
+# Metacognition Trainer: Mastermind or Monster? (`meta-cognition.html`)
 
 ## Description
 
@@ -28,7 +28,7 @@ The application provides interactive exercises and journaling prompts based on c
 ## How to Use
 
 1.  Clone or download the repository.
-2.  Open the `index.html` file directly in a modern web browser (like Chrome, Firefox, Edge, Safari).
+2.  Open the `meta-cognition.html` file directly in a modern web browser (like Chrome, Firefox, Edge, Safari).
 3.  No build steps or local server are required.
 
 ## Modules Overview
@@ -86,3 +86,18 @@ Users can manage their data via the "Data Import/Export" module:
 ## Source / Inspiration
 
 The specific exercises and quotes within the application suggest it's based on a particular video transcript or teaching material focused on practical metacognition and its potential applications, both positive and negative.
+
+---
+
+# Other Project Files
+
+This repository contains several other standalone HTML files and resources:
+
+*   **`index.html` & `script.js`**: A simple blog interface. `index.html` displays posts, and `script.js` handles dynamic category/archive menus, post filtering, and theme customization (colors, animation speed).
+*   **`call-tracker.html`**: A call logging tool, potentially for agricultural/business use ("Mandi"). Features include saving call details, follow-ups, history, filtering, and data import/export (CSV/JSON) using local storage.
+
+*   **`Mind-Map.html`**: A web-based mind map creator built with React. Allows creating, editing, deleting nodes, and saving/loading maps as JSON.
+*   **`Paddy-Auction-Report.html`**: Displays a report of paddy (rice) weight data, organized by district, collection center, and variety. Includes filtering and download options. Data is hardcoded in the script.
+*   **`smell_of_wet_soil.html`**: An informational page explaining the science behind petrichor (the smell of rain on dry earth).
+*   **`PLAN.md`**: Contains planning notes for the project (content not detailed here).
+*   **`Genspark/` directory**: Contains related files, possibly from a specific course or project phase (contents not detailed here).
