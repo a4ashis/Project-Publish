@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-time Audio Visualizer</title>
+    <style>
+        /* Basic Reset & Body Styling */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            font-family: sans-serif;
+            background-color: #111;
+            color: #eee;
+            overflow: hidden; /* Prevent scrollbars */
+        }
+
+        /* Main App Layout */
+        #app {
+            display: flex;
+            flex-direction: column;
+            height: 100vh; /* Full viewport height */
+        }
+
+        /* Controls Area */
+        #controls {
+            padding: 15px;
+            background-color: #222;
+            border-bottom: 1px solid #444;
+            flex-shrink: 0; /* Don't shrink controls */
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 15px; /* Spacing between controls */
+            align-items: center;
+        }
+
+        #controls button,
+        #controls select {
+            padding: 8px 12px;
+            font-size: 1em;
+            background-color: #444;
+            color: #eee;
+            border: 1px solid #666;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+        #controls button:hover,
+        #controls select:hover {
+            background-color: #555;
+        }
+
+        #controls button:disabled {
+            background-color: #333;
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        #status {
+            font-size: 0.9em;
+            color: #aaa;
+            flex-grow: 1; /* Take remaining space */
+            min-width: 150px; /* Ensure it doesn't get too squished */
+            text-align: right; /* Align status text to the right */
+        }
+
+        /* Canvas Container */
+        #canvasContainer {
+            flex-grow: 1; /* Take remaining vertical space */
+            position: relative; /* Needed for absolute positioning or overlays if added */
+            background-color: #000;
+            min-height: 200px; /* Ensure canvas is never too small */
+        }
+
+        /* Canvas Styling */
+        #visualizerCanvas {
+            display: block; /* Removes baseline margin */
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Simple responsiveness for controls */
+        @media (max-width: 450px) {
+            #controls {
+                flex-direction: column;
+                align-items: stretch; /* Make controls full width */
+            }
+            #status {
+                text-align: center; /* Center status on small screens */
+                margin-top: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="app">
+        <div id="controls">
+            <button id="startButton">Start Visualization</button>
+            <select id="vizType">
+                <option value="frequencyBars" selected>Frequency Bars</option>
+                <option value="waveform">Waveform</option>
+                <option value="circularWave">Circular Wave</option>
+                <option value="radialBars">Radial Bars</option>
+                <option value="crazyParticles">Crazy Particles</option>
+                <option value="tunnelVision">Tunnel Vision</option>
+            </select>
+            <p id="status">Click 'Start' to begin</p>
+        </div>
+        <div id="canvasContainer">
+            <canvas id="visualizerCanvas"></canvas>
+        </div>
+    </div>
+
+    <script>
+        // --- DOM Elements ---
+        const startButton = document.getElementById('startButton');
+        const vizTypeSelect = document.getElementById('vizType');
+        const statusElement = document.getElementById('status');
+        const canvas = document.getElementById('visualizerCanvas');
+        const canvasContainer = document.getElementById('canvasContainer');
+        const ctx = canvas.getContext('2d');
+
+        // --- Audio API Variables ---
+        let audioContext;
+        let analyser;
+        let source;
+        let dataArray; // Uint8Array for frequency/waveform data
+        let bufferLength;
+
+        // --- State Variables ---
+        let isInitialized = false;
+        let animationFrameId;
+        let currentVizType = 'frequencyBars';
+        let particles = []; // For particle visualization
+
+        // --- Visualization Parameters (can be tweaked) ---
+        const FFT_SIZE = 2048; // Must be power of 2 (32 to 32768)
+        const PARTICLE_COUNT = 200;
+        const PARTICLE_LIFE = 150; // Frames
+        const MAX_PARTICLE_SPEED = 5;
+
+        // --- Event Listeners ---
+        startButton.addEventListener('click', handleStart);
+        vizTypeSelect.addEventListener('change', (e) => {
+            currentVizType = e.target.value;
+            // Reset particles if switching away from or to particle viz
+            if (currentVizType !== 'crazyParticles') particles = [];
+            // Clear canvas immediately on type change for cleaner transition
+            clearCanvas();
+        });
+        window.addEventListener('resize', handleResize);
+
+        // --- Initialization ---
+        function handleStart() {
+            if (isInitialized) return; // Prevent multiple inits
+
+            statusElement.textContent = "Initializing Audio...";
+            startButton.disabled = true;
+
+            // Create Audio Context (do this first)
+            audioContext = new (window.AudioContext || window.webkitAudioContext)();
+
+            // Resume context on user gesture if needed (browsers often require interaction)
+            audioContext.resume().then(() => {
+                console.log("AudioContext resumed successfully");
+                requestMicrophoneAccess();
+            }).catch(err => {
+                console.error("AudioContext resume failed:", err);
+                statusElement.textContent = `Error: AudioContext resume failed: ${err.message}`;
+                startButton.disabled = false;
+            });
+        }
+
+        function requestMicrophoneAccess() {
+            statusElement.textContent = "Requesting Mic Permission...";
+            navigator.mediaDevices.getUserMedia({ audio: true, video: false })
+                .then(handleMicStream)
+                .catch(handleMicError);
+        }
+
+        function handleMicStream(stream) {
+            statusElement.textContent = "Mic Access Granted. Setting up...";
+            console.log("Microphone stream acquired:", stream);
+
+            source = audioContext.createMediaStreamSource(stream);
+            analyser = audioContext.createAnalyser();
+
+            // Configure Analyser Node
+            analyser.fftSize = FFT_SIZE;
+            bufferLength = analyser.frequencyBinCount; // Half of fftSize
+            dataArray = new Uint8Array(bufferLength);
+
+            // Connect the nodes: Mic Stream -> Analyser
+            // We don't need to connect analyser to destination unless we want to *hear* the mic input
+            source.connect(analyser);
+            // analyser.connect(audioContext.destination); // Uncomment to hear mic input
+
+            isInitialized = true;
+            statusElement.textContent = "Running...";
+            startButton.textContent = "Running"; // Change button text
+
+            // Set initial canvas size and start drawing loop
+            handleResize(); // Set initial size correctly
+            drawVisualizer();
+        }
+
+        function handleMicError(err) {
+            console.error("Microphone access error:", err);
+            if (err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError') {
+                statusElement.textContent = "Error: Microphone permission denied.";
+            } else if (err.name === 'NotFoundError' || err.name === 'DevicesNotFoundError') {
+                statusElement.textContent = "Error: No microphone found.";
+            } else {
+                statusElement.textContent = `Error: ${err.name || 'Unknown error'}`;
+            }
+            startButton.disabled = false; // Re-enable button on error
+            startButton.textContent = "Start Visualization"; // Reset button text
+        }
+
+        // --- Responsiveness ---
+        function handleResize() {
+            // Get dimensions of the container
+            const containerWidth = canvasContainer.clientWidth;
+            const containerHeight = canvasContainer.clientHeight;
+
+            // Set canvas drawing buffer size to match container size
+            canvas.width = containerWidth;
+            canvas.height = containerHeight;
+
+            // Optional: If you have elements that depend heavily on size ratios,
+            // you might need to recalculate them here, but often it's better
+            // to calculate them dynamically within the draw function itself.
+            console.log(`Canvas resized to: ${canvas.width}x${canvas.height}`);
+
+            // Clear canvas on resize to prevent artifacts if drawing stops temporarily
+            clearCanvas();
+        }
+
+        function clearCanvas() {
+             ctx.clearRect(0, 0, canvas.width, canvas.height);
+        }
+
+        // --- Main Drawing Loop ---
+        function drawVisualizer() {
+            if (!isInitialized) return;
+
+            animationFrameId = requestAnimationFrame(drawVisualizer); // Loop
+
+            // Get data based on selected visualization type
+            if (currentVizType === 'waveform' || currentVizType === 'circularWave') {
+                analyser.getByteTimeDomainData(dataArray); // Waveform data (0-255)
+            } else {
+                analyser.getByteFrequencyData(dataArray); // Frequency data (0-255)
+            }
+
+            // Clear canvas for redraw
+            // Background fade effect (optional, creates trails)
+            // ctx.fillStyle = 'rgba(0, 0, 0, 0.1)'; // Slow fade
+            // ctx.fillRect(0, 0, canvas.width, canvas.height);
+            clearCanvas(); // Use clearRect for no trails
+
+            // --- Call the appropriate drawing function ---
+            switch (currentVizType) {
+                case 'frequencyBars':
+                    drawFrequencyBars();
+                    break;
+                case 'waveform':
+                    drawWaveform();
+                    break;
+                case 'circularWave':
+                    drawCircularWave();
+                    break;
+                case 'radialBars':
+                    drawRadialBars();
+                    break;
+                case 'crazyParticles':
+                    drawCrazyParticles();
+                    break;
+                case 'tunnelVision':
+                    drawTunnelVision();
+                    break;
+                default:
+                    drawFrequencyBars(); // Fallback
+            }
+        }
+
+        // --- Visualization Drawing Functions ---
+
+        function drawFrequencyBars() {
+            const barWidth = (canvas.width / bufferLength) * 1.5; // Slightly wider bars
+            let x = 0;
+            const barSpacing = barWidth * 0.1; // Small gap between bars
+
+            for (let i = 0; i < bufferLength; i++) {
+                const barHeight = (dataArray[i] / 255) * canvas.height * 0.8; // Scale height
+
+                // Color based on frequency band (hue rotation)
+                const hue = (i / bufferLength) * 360;
+                 // Color based on height/intensity
+                const intensity = dataArray[i] / 255;
+                //const hue = 120 + intensity * 120; // Green to Red based on intensity
+                const saturation = 100; // Full saturation
+                const lightness = 50 + intensity * 25; // Brighter for louder sounds
+
+
+                ctx.fillStyle = `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+                ctx.fillRect(x, canvas.height - barHeight, barWidth - barSpacing, barHeight);
+
+                x += barWidth;
+            }
+        }
+
+        function drawWaveform() {
+            ctx.lineWidth = 2;
+            const sliceWidth = canvas.width * 1.0 / bufferLength;
+            let x = 0;
+
+            // Color based on overall amplitude
+            let sum = 0;
+            for(let i = 0; i < bufferLength; i++) {
+                sum += Math.abs(dataArray[i] - 128); // Deviation from midpoint (silence)
+            }
+            const avgAmplitude = (sum / bufferLength) / 128; // Normalize to 0-1
+            const hue = 200 + avgAmplitude * 100; // Blue to Purple/Pink
+            ctx.strokeStyle = `hsl(${hue}, 90%, 60%)`;
+
+
+            ctx.beginPath();
+            ctx.moveTo(0, canvas.height / 2); // Start in the middle
+
+            for (let i = 0; i < bufferLength; i++) {
+                // dataArray values are 0-255, 128 is the 'zero' line
+                const v = dataArray[i] / 255.0; // Normalize to 0-1
+                const y = v * canvas.height;
+
+                ctx.lineTo(x, y);
+                x += sliceWidth;
+            }
+
+            ctx.lineTo(canvas.width, canvas.height / 2); // End in the middle
+            ctx.stroke();
+        }
+
+        function drawCircularWave() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const baseRadius = Math.min(canvas.width, canvas.height) * 0.2; // Base circle size
+            const maxRadiusOffset = Math.min(canvas.width, canvas.height) * 0.25; // Max displacement
+
+            ctx.lineWidth = 2;
+            ctx.strokeStyle = 'rgba(50, 200, 255, 0.8)';
+            ctx.beginPath();
+
+            for (let i = 0; i < bufferLength; i++) {
+                const angle = (i / bufferLength) * Math.PI * 2 - Math.PI / 2; // Start from top
+                const v = (dataArray[i] - 128) / 128.0; // Normalize waveform data (-1 to 1)
+                const radius = baseRadius + v * maxRadiusOffset * (0.5 + Math.sin(Date.now() * 0.001 + i * 0.1) * 0.5); // Add wobble
+
+                const x = centerX + Math.cos(angle) * radius;
+                const y = centerY + Math.sin(angle) * radius;
+
+                if (i === 0) {
+                    ctx.moveTo(x, y);
+                } else {
+                    ctx.lineTo(x, y);
+                }
+            }
+            ctx.closePath(); // Connect end to start
+            ctx.stroke();
+
+             // Add a pulsating inner core based on average amplitude
+            let sum = 0;
+            for(let i = 0; i < bufferLength; i++) { sum += Math.abs(dataArray[i] - 128); }
+            const avgAmplitude = (sum / bufferLength) / 128;
+            const coreRadius = baseRadius * 0.3 * (1 + avgAmplitude * 1.5);
+            const hue = 240 + avgAmplitude * 120; // Blue to Magenta
+            ctx.fillStyle = `hsla(${hue}, 90%, 60%, 0.5)`;
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, Math.max(1, coreRadius), 0, Math.PI * 2);
+            ctx.fill();
+        }
+
+         function drawRadialBars() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const baseRadius = 50; // Starting radius of bars
+            const maxBarHeight = Math.min(canvas.width, canvas.height) * 0.35; // Max length of bars
+            const angleIncrement = (Math.PI * 2) / bufferLength;
+
+            // Only draw a portion of the frequency bins for clarity
+            const binsToDraw = Math.floor(bufferLength * 0.6);
+
+            for (let i = 0; i < binsToDraw; i++) {
+                const barHeight = (dataArray[i] / 255) * maxBarHeight;
+                const angle = i * angleIncrement * (bufferLength / binsToDraw); // Spread angles
+
+                const startX = centerX + Math.cos(angle) * baseRadius;
+                const startY = centerY + Math.sin(angle) * baseRadius;
+                const endX = centerX + Math.cos(angle) * (baseRadius + barHeight);
+                const endY = centerY + Math.sin(angle) * (baseRadius + barHeight);
+
+                // Color based on frequency and intensity
+                const hue = (i / binsToDraw) * 300; // Wider color range
+                const intensity = dataArray[i] / 255;
+                ctx.strokeStyle = `hsl(${hue}, 100%, ${50 + intensity * 40}%)`;
+                ctx.lineWidth = (canvas.width / bufferLength) * 1.5; // Adjust width slightly
+
+                ctx.beginPath();
+                ctx.moveTo(startX, startY);
+                ctx.lineTo(endX, endY);
+                ctx.stroke();
+            }
+        }
+
+        function drawCrazyParticles() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+
+            // Calculate overall energy (bass, mid, treble)
+            const bassAvg = calculateAverage(dataArray, 0, Math.floor(bufferLength * 0.1));
+            const midAvg = calculateAverage(dataArray, Math.floor(bufferLength * 0.1), Math.floor(bufferLength * 0.4));
+            const trebleAvg = calculateAverage(dataArray, Math.floor(bufferLength * 0.4), bufferLength);
+
+            // Spawn new particles based on bass energy
+            if (bassAvg > 100 && particles.length < PARTICLE_COUNT * 2) { // More particles allowed
+                const count = Math.floor(bassAvg / 50); // Spawn more if bass is louder
+                for (let i = 0; i < count; i++) {
+                    particles.push(createParticle(centerX, centerY, trebleAvg));
+                }
+            }
+
+            // Update and draw particles
+            ctx.globalAlpha = 0.8; // Slight transparency
+            for (let i = particles.length - 1; i >= 0; i--) {
+                const p = particles[i];
+                updateParticle(p, midAvg);
+                drawParticle(p);
+
+                // Remove dead particles
+                if (p.life <= 0) {
+                    particles.splice(i, 1);
+                }
+            }
+             ctx.globalAlpha = 1.0; // Reset alpha
+        }
+
+         function drawTunnelVision() {
+            const centerX = canvas.width / 2;
+            const centerY = canvas.height / 2;
+            const maxRadius = Math.max(canvas.width, canvas.height) * 0.7;
+            const segments = 64; // Number of points around the circle
+            const rings = 15; // Number of concentric rings
+
+            ctx.lineWidth = 1.5;
+
+            for (let r = 1; r <= rings; r++) {
+                 const ringRadius = (r / rings) * maxRadius * (0.5 + Math.sin(Date.now() * 0.0005 + r * 0.5) * 0.5); // Pulsating radius
+                 const ringAlpha = 1.0 - (r / rings) * 0.8; // Fade outer rings
+                 const hue = (Date.now() * 0.05 + r * 20) % 360; // Shifting colors
+
+                 ctx.strokeStyle = `hsla(${hue}, 90%, 60%, ${ringAlpha})`;
+                 ctx.beginPath();
+
+                for(let i = 0; i <= segments; i++) {
+                    const angle = (i / segments) * Math.PI * 2;
+                    const dataIndex = Math.floor((i / segments) * bufferLength * 0.8) % bufferLength; // Map segment to frequency data
+                    const amplitude = dataArray[dataIndex] / 255; // 0 to 1
+
+                    // Distort radius based on frequency amplitude and add noise
+                    const distortion = amplitude * maxRadius * 0.1 * (r/rings); // More distortion on outer rings
+                    const noise = (Math.random() - 0.5) * maxRadius * 0.01; // Subtle random wobble
+                    const currentRadius = ringRadius + distortion + noise;
+
+                    const x = centerX + Math.cos(angle) * currentRadius;
+                    const y = centerY + Math.sin(angle) * currentRadius;
+
+                    if (i === 0) {
+                        ctx.moveTo(x, y);
+                    } else {
+                        ctx.lineTo(x, y);
+                    }
+                }
+                 ctx.stroke();
+            }
+        }
+
+
+        // --- Helper Functions ---
+         function calculateAverage(data, start, end) {
+            let sum = 0;
+            const count = end - start;
+            if (count <= 0) return 0;
+            for (let i = start; i < end; i++) {
+                sum += data[i];
+            }
+            return sum / count;
+        }
+
+        function createParticle(x, y, treble) {
+            const angle = Math.random() * Math.PI * 2;
+            const speed = 1 + Math.random() * MAX_PARTICLE_SPEED * (treble / 128); // Faster if treble is high
+            const hue = (Date.now() * 0.1 + Math.random() * 60) % 360; // Color burst
+            return {
+                x: x,
+                y: y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                life: PARTICLE_LIFE + Math.random() * 50,
+                size: 2 + Math.random() * 4,
+                 //color: `hsl(${Math.random() * 360}, 100%, ${60 + Math.random() * 30}%)`
+                 color: `hsl(${hue}, 100%, ${60 + Math.random() * 30}%)`
+            };
+        }
+
+        function updateParticle(p, midAvg) {
+            p.x += p.vx;
+            p.y += p.vy;
+            // Add some drift/turbulence based on mid-range frequencies
+            p.vx += (Math.random() - 0.5) * 0.5 * (midAvg / 128);
+            p.vy += (Math.random() - 0.5) * 0.5 * (midAvg / 128);
+            // Gravity effect (optional)
+            // p.vy += 0.05;
+            p.life -= 1;
+            p.size *= 0.98; // Shrink over time
+        }
+
+        function drawParticle(p) {
+             if (p.size < 0.5) return; // Don't draw tiny particles
+             ctx.fillStyle = p.color;
+             ctx.beginPath();
+             ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+             ctx.fill();
+        }
+
+        // --- Initial Setup ---
+        handleResize(); // Set initial canvas size on load
+
+    </script>
+</body>
+</html>
