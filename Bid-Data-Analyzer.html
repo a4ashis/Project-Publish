@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lowest Bid Finder</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f4f4f4;
+        }
+        .container {
+            max-width: 1000px;
+            margin: auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1, h2 {
+            text-align: center;
+            color: #333;
+        }
+        h3 {
+            margin-top: 1.5em;
+            color: #444;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        textarea {
+            width: 98%;
+            height: 200px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+        }
+        .filters {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            background-color: #fdfdfd;
+        }
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .filter-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: 0.9em;
+            color: #555;
+        }
+        .filter-group input[type="text"],
+        .filter-group input[type="number"],
+        .filter-group input[type="date"],
+        .filter-group input[type="time"] {
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1em;
+        }
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+             align-items: center;
+        }
+        button {
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 1em;
+            transition: background-color 0.2s ease;
+        }
+        #searchButton {
+            background-color: #28a745;
+            color: white;
+            flex-grow: 1;
+        }
+        #searchButton:hover {
+            background-color: #218838;
+        }
+        #clearButton {
+            background-color: #ffc107;
+            color: #333;
+        }
+        #clearButton:hover {
+            background-color: #e0a800;
+        }
+         #noFilterButton {
+            background-color: #6c757d;
+            color: white;
+        }
+        #noFilterButton:hover {
+            background-color: #5a6268;
+        }
+        #output {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            min-height: 100px; /* Increased min-height */
+            font-weight: bold;
+            color: #004085;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .output-group {
+             margin-bottom: 1em;
+             padding-bottom: 0.5em;
+             border-bottom: 1px dashed #ccc;
+        }
+         .output-group:last-child {
+             border-bottom: none;
+         }
+         .output-group strong {
+             color: #333;
+         }
+         .output-group span {
+             font-weight: normal;
+             color: #555;
+             display: block; /* Put stacks on new line */
+             margin-left: 1em; /* Indent stacks */
+         }
+
+        #status {
+             margin-top: 10px;
+             font-style: italic;
+             color: #888;
+             font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Bid Data Analyzer</h1>
+
+        <label for="dataInput"><h2>Paste Data Here:</h2></label>
+        <textarea id="dataInput" placeholder="Paste the bid data copied from the source page..."></textarea>
+        <div id="status"></div>
+
+        <h2>Filters</h2>
+        <div class="filters">
+            <div class="filter-group">
+                <label for="filterWarehouse">Warehouse/District/Variety:</label>
+                <input type="text" id="filterWarehouse" placeholder="Any text match...">
+            </div>
+            <div class="filter-group">
+                <label for="filterAqCost">Max Aq Cost:</label>
+                <input type="number" id="filterAqCost" placeholder="e.g., 2900" step="any">
+            </div>
+            <div class="filter-group">
+                <label for="filterStartDate">Start Date:</label>
+                <input type="date" id="filterStartDate">
+            </div>
+             <div class="filter-group">
+                <label for="filterStartTime">Start/End In (Time):</label>
+                 <input type="text" id="filterStartTime" placeholder="e.g., 15:30:00">
+            </div>
+        </div>
+
+        <div class="action-buttons">
+            <button id="searchButton">Search lowest bid price</button> <!-- Button text remains -->
+            <button id="clearButton">Clear Filters</button>
+            <button id="noFilterButton">No Filters (Run Search)</button>
+        </div>
+
+
+        <h2>Result (Lowest Best Bid Stack Number(s))</h2>
+        <div id="output">Results will appear here...</div>
+    </div>
+
+    <script>
+        const dataInput = document.getElementById('dataInput');
+        const filterWarehouseInput = document.getElementById('filterWarehouse');
+        const filterAqCostInput = document.getElementById('filterAqCost');
+        const filterStartDateInput = document.getElementById('filterStartDate');
+        const filterStartTimeInput = document.getElementById('filterStartTime');
+        const searchButton = document.getElementById('searchButton');
+        const clearButton = document.getElementById('clearButton');
+        const noFilterButton = document.getElementById('noFilterButton');
+        const outputDiv = document.getElementById('output');
+        const statusDiv = document.getElementById('status');
+
+        let parsedData = [];
+
+        function parseData() {
+            const rawData = dataInput.value;
+            if (!rawData.trim()) {
+                statusDiv.textContent = 'Status: No data pasted.';
+                outputDiv.textContent = 'Please paste data into the text area above.';
+                parsedData = [];
+                return false;
+            }
+
+            statusDiv.textContent = 'Status: Parsing data...';
+            parsedData = [];
+            const lines = rawData.split('\n');
+            let currentLineIndex = 0;
+
+            while (currentLineIndex < lines.length) {
+                const watchListIndex = lines.findIndex((line, index) =>
+                    index >= currentLineIndex && line.trim().toLowerCase() === 'watchlist'
+                );
+
+                if (watchListIndex === -1) break;
+
+                const dataLinesForRecord = [];
+                let actualDataLineCounter = 0;
+                let innerIndex = watchListIndex + 1;
+
+                while (actualDataLineCounter < 9 && innerIndex < lines.length) {
+                    const currentLine = lines[innerIndex];
+                    if (currentLine && currentLine.trim()) {
+                        dataLinesForRecord.push(currentLine.trim());
+                        actualDataLineCounter++;
+                    }
+                    innerIndex++;
+                    if (currentLine && currentLine.trim().toLowerCase() === 'watchlist') {
+                        console.warn(`Found another 'watchlist' before collecting 9 data items after line ${watchListIndex}. Record might be incomplete.`);
+                        actualDataLineCounter = -1;
+                        break;
+                    }
+                }
+
+                if (actualDataLineCounter === 9) {
+                    try {
+                        const record = {
+                            stackNumber: dataLinesForRecord[0],
+                            warehouse: dataLinesForRecord[1],
+                            district: dataLinesForRecord[2],
+                            variety: dataLinesForRecord[3],
+                            aqCostRaw: dataLinesForRecord[4],
+                            bidQuantity: dataLinesForRecord[5],
+                            startDateRaw: dataLinesForRecord[6],
+                            startEndIn: dataLinesForRecord[7],
+                            bestBidRaw: dataLinesForRecord[8], // Changed name
+                            aqCost: NaN,
+                            bestBidValue: NaN, // Added for numeric best bid
+                            startDate: null
+                        };
+
+                        record.aqCost = parseFloat(record.aqCostRaw.replace(/,/g, ''));
+                        // **** PARSE BEST BID ****
+                        record.bestBidValue = parseFloat(record.bestBidRaw.replace(/,/g, ''));
+
+                        if (record.startDateRaw) {
+                            const dateParts = record.startDateRaw.match(/(\d{2})-(\d{2})-(\d{4})/);
+                            if (dateParts && dateParts.length === 4) {
+                                const formattedDate = `${dateParts[3]}-${dateParts[2]}-${dateParts[1]}`;
+                                record.startDate = new Date(formattedDate);
+                                if (isNaN(record.startDate.getTime())) record.startDate = null;
+                            }
+                        }
+
+                        // **** VALIDITY CHECK: Now check bestBidValue too ****
+                        if (record.stackNumber && !isNaN(record.bestBidValue)) { // Check bestBidValue instead of aqCost
+                            parsedData.push(record);
+                        } else {
+                            console.warn("Skipping record due to missing Stack Number or invalid Best Bid:", record);
+                        }
+
+                        currentLineIndex = innerIndex;
+
+                    } catch (e) {
+                        console.error("Error processing record starting near line index:", watchListIndex, e);
+                        statusDiv.textContent = `Status: Error parsing record near line ${watchListIndex + 1}. Check console.`;
+                        currentLineIndex = watchListIndex + 1;
+                    }
+                } else {
+                    if (watchListIndex !== -1) {
+                       console.warn(`Incomplete record found after 'watchlist' on line ${watchListIndex + 1}. Expected 9 non-empty lines, found ${actualDataLineCounter}.`);
+                    }
+                    currentLineIndex = watchListIndex + 1;
+                }
+            } // End while loop
+
+            if (parsedData.length > 0) {
+                statusDiv.textContent = `Status: Successfully parsed ${parsedData.length} records. Ready for search.`;
+            } else {
+                statusDiv.textContent = 'Status: Parsing complete, but no valid data records found. Check pasted data format and ensure "watchlist" keywords exist.';
+                outputDiv.textContent = 'No valid bid data records could be extracted. Please check the data format.';
+            }
+            return parsedData.length > 0;
+        }
+
+        function formatDateForInput(date) {
+            if (!(date instanceof Date) || isNaN(date)) return '';
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        function runSearch(applyFilters = true) {
+            if (!parsedData.length) {
+                 outputDiv.textContent = 'No data parsed yet. Please paste data into the text area first.';
+                 statusDiv.textContent = 'Status: No data to search.';
+                 return;
+             }
+
+            statusDiv.textContent = 'Status: Filtering data...';
+            let filteredResults = parsedData;
+
+            // --- Apply Filters (Same as before, including Aq Cost filter if needed) ---
+            if (applyFilters) {
+                 const warehouseFilter = filterWarehouseInput.value.trim().toLowerCase();
+                 const aqCostFilter = filterAqCostInput.value ? parseFloat(filterAqCostInput.value) : null; // Keep AqCost filter available
+                 const startDateFilterValue = filterStartDateInput.value;
+                 const startTimeFilter = filterStartTimeInput.value.trim();
+
+                 filteredResults = parsedData.filter(item => {
+                    if (warehouseFilter && !`${item.warehouse} ${item.district} ${item.variety}`.toLowerCase().includes(warehouseFilter)) return false;
+                    if (aqCostFilter !== null && !isNaN(aqCostFilter) && (isNaN(item.aqCost) || item.aqCost > aqCostFilter)) return false; // Still filter by AqCost if entered
+                    if (startDateFilterValue) {
+                        const itemDateStr = item.startDate ? formatDateForInput(item.startDate) : null;
+                        if (itemDateStr !== startDateFilterValue) return false;
+                    }
+                    if (startTimeFilter && item.startEndIn.trim() !== startTimeFilter) return false;
+                    // --- Crucial: Also filter out items with invalid Best Bid Values ---
+                     if (isNaN(item.bestBidValue)) return false;
+                    return true;
+                });
+            } else {
+                // If no filters, still remove items with invalid best bids for calculation
+                 filteredResults = parsedData.filter(item => !isNaN(item.bestBidValue));
+            }
+
+            statusDiv.textContent = `Status: Found ${filteredResults.length} valid & matching records. Finding lowest bids...`;
+            outputDiv.innerHTML = ''; // Clear previous results
+
+            if (filteredResults.length === 0) {
+                outputDiv.textContent = 'No records found matching the specified filters (or none with valid Best Bid values).';
+                return;
+            }
+
+            // --- Find Overall Minimum Best Bid ---
+            let overallMinBestBid = Infinity;
+            filteredResults.forEach(item => {
+                if (item.bestBidValue < overallMinBestBid) {
+                    overallMinBestBid = item.bestBidValue;
+                }
+            });
+
+            const overallLowestBidStacks = filteredResults
+                .filter(item => item.bestBidValue === overallMinBestBid)
+                .map(item => item.stackNumber);
+
+            if (overallLowestBidStacks.length > 0) {
+                outputDiv.innerHTML += `<h3>Overall Lowest Best Bid (${overallMinBestBid.toFixed(2)})</h3>` +
+                                      `<div class="output-group"><strong>Stack Number(s):</strong><span>${overallLowestBidStacks.join('\n')}</span></div>`;
+            } else {
+                 outputDiv.innerHTML += `<h3>Overall Lowest Best Bid</h3><div class="output-group"><span>Could not determine overall lowest bid stacks.</span></div>`;
+            }
+
+
+            // --- Grouping Logic ---
+            const groupedByWarehouse = {};
+            const groupedByDate = {};
+            const groupedByTime = {};
+
+            filteredResults.forEach(item => {
+                 // Helper function to update group data
+                 const updateGroup = (groupMap, key) => {
+                     if (!key && key !== 0) return; // Skip if key is invalid/empty (allows 0 for bestBid)
+                     if (!groupMap[key]) {
+                         // First item for this group
+                         groupMap[key] = { minBid: item.bestBidValue, stacks: [item.stackNumber] };
+                     } else {
+                         // Compare with existing minimum for this group
+                         if (item.bestBidValue < groupMap[key].minBid) {
+                             groupMap[key].minBid = item.bestBidValue;
+                             groupMap[key].stacks = [item.stackNumber]; // New minimum found
+                         } else if (item.bestBidValue === groupMap[key].minBid) {
+                             if (!groupMap[key].stacks.includes(item.stackNumber)) {
+                                 groupMap[key].stacks.push(item.stackNumber); // Add stack if same minimum
+                             }
+                         }
+                     }
+                 };
+
+                 // 1. Group by Warehouse/District/Variety
+                 const warehouseKey = `${item.warehouse} | ${item.district} | ${item.variety}`;
+                 updateGroup(groupedByWarehouse, warehouseKey);
+
+                 // 2. Group by Start Date
+                 const dateKey = item.startDateRaw || "Unknown Date"; // Use raw string as key, handle missing
+                 updateGroup(groupedByDate, dateKey);
+
+                 // 3. Group by Start/End Time
+                 const timeKey = item.startEndIn || "Unknown Time"; // Use raw string as key, handle missing
+                 updateGroup(groupedByTime, timeKey);
+             });
+
+             // --- Display Grouped Results ---
+             const displayGroupResults = (groupMap, title) => {
+                 outputDiv.innerHTML += `<h3>${title}</h3>`;
+                 const keys = Object.keys(groupMap).sort(); // Sort keys for consistent order
+                 if (keys.length === 0) {
+                     outputDiv.innerHTML += `<div class="output-group"><span>No groups found for this category.</span></div>`;
+                     return;
+                 }
+                 keys.forEach(key => {
+                     const groupData = groupMap[key];
+                     outputDiv.innerHTML += `<div class="output-group">` +
+                                            `<strong>${key} (Lowest Bid: ${groupData.minBid.toFixed(2)}):</strong>` +
+                                            `<span>${groupData.stacks.join('\n')}</span>` +
+                                            `</div>`;
+                 });
+             };
+
+             displayGroupResults(groupedByWarehouse, "Lowest Bid by Warehouse/District/Variety");
+             displayGroupResults(groupedByDate, "Lowest Bid by Start Date");
+             displayGroupResults(groupedByTime, "Lowest Bid by Start/End In Time");
+
+
+             statusDiv.textContent = `Status: Search complete. Found ${filteredResults.length} records. Displaying overall and grouped lowest bids.`;
+
+        } // End runSearch
+
+
+        function clearFilters() {
+            filterWarehouseInput.value = '';
+            filterAqCostInput.value = '';
+            filterStartDateInput.value = '';
+            filterStartTimeInput.value = '';
+             statusDiv.textContent = 'Status: Filters cleared.';
+             if (parsedData.length > 0) {
+                 outputDiv.textContent = 'Filters cleared. Ready for new search on existing data.';
+             } else {
+                 outputDiv.textContent = 'Filters cleared. Paste data to begin.';
+             }
+        }
+
+        // Event Listeners
+        searchButton.addEventListener('click', () => runSearch(true));
+        clearButton.addEventListener('click', clearFilters);
+        noFilterButton.addEventListener('click', () => {
+            clearFilters();
+            runSearch(false);
+        });
+
+        [filterWarehouseInput, filterAqCostInput, filterStartDateInput, filterStartTimeInput].forEach(input => {
+            input.addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    event.preventDefault();
+                    runSearch(true);
+                }
+            });
+        });
+
+         dataInput.addEventListener('paste', () => {
+             setTimeout(() => {
+                 const success = parseData();
+                 if (success) {
+                    outputDiv.textContent = 'Data pasted and parsed. Apply filters and search, or use "No Filters" button.';
+                 }
+             }, 50);
+         });
+
+         // Initial status
+         statusDiv.textContent = 'Status: Ready. Paste data into the text area.';
+         outputDiv.textContent = 'Results will appear here after pasting data and searching.';
+
+    </script>
+</body>
+</html>
