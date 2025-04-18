@@ -1,0 +1,689 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Paddy Bid Analyzer (TSV Support)</title>
+    <!-- Include Chart.js Library (Explicitly V3) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
+    <!-- Include Chart.js BoxPlot Plugin -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-chart-box-and-violin-plot/build/Chart.BoxPlot.min.js"></script>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            line-height: 1.6;
+            margin: 20px;
+            background-color: #f8f9fa;
+            color: #212529;
+        }
+        .container {
+            background-color: #fff;
+            padding: 20px 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+            max-width: 1400px;
+            margin: auto;
+        }
+        h1, h2, h3 {
+            color: #343a40;
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 8px;
+            margin-top: 35px;
+             margin-bottom: 20px;
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #0056b3;
+        }
+        textarea {
+            width: 98%;
+            min-height: 150px;
+            margin-bottom: 15px;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 0.9em;
+            resize: vertical;
+        }
+        .controls-grid {
+            display: grid;
+            /* Adjusted grid for fewer controls */
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            align-items: end;
+            margin-bottom: 25px;
+            padding: 15px;
+            background-color: #e9ecef;
+            border-radius: 5px;
+        }
+        .control-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .control-group label {
+            font-weight: bold;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: #495057;
+        }
+        button, select, input[type="number"] {
+            padding: 10px 15px;
+            border-radius: 4px;
+            border: 1px solid #ced4da;
+            font-size: 1em;
+        }
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            /* Ensure button takes height */
+            height: 40px; /* Match input height */
+            box-sizing: border-box;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button.secondary {
+            background-color: #6c757d;
+        }
+         button.secondary:hover {
+            background-color: #5a6268;
+         }
+         button.copy-btn {
+            padding: 2px 6px;
+            font-size: 0.8em;
+            margin-left: 5px;
+            background-color: #28a745;
+            cursor: pointer;
+            vertical-align: middle;
+            height: auto; /* Override default button height */
+         }
+         button.copy-btn:hover {
+            background-color: #218838;
+         }
+         button.copy-btn.copied {
+            background-color: #ffc107;
+            color: #333;
+         }
+
+        #results {
+            margin-top: 30px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+             font-size: 0.9em;
+        }
+        th, td {
+            border: 1px solid #dee2e6;
+            padding: 8px 10px;
+            text-align: left;
+             vertical-align: top;
+             white-space: nowrap; /* Prevent wrapping for TSV data */
+        }
+        th {
+            background-color: #e9ecef;
+            color: #495057;
+            font-weight: 600;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+         tr.hidden-row {
+            display: none;
+        }
+
+        .result-section {
+            background-color: #ffffff;
+            border: 1px solid #dee2e6;
+            padding: 15px 20px;
+            margin-bottom: 25px;
+            border-radius: 5px;
+        }
+        .scrollable-content {
+            max-height: 400px;
+            overflow-y: auto;
+             overflow-x: auto; /* Add horizontal scroll for wide TSV tables */
+            position: relative;
+            border-top: 1px solid #dee2e6;
+            margin-top: 15px;
+        }
+        .summary-box {
+            background-color: #e7f1ff;
+            border: 1px solid #b8d0fb;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+        }
+        .summary-item {
+            margin-bottom: 8px;
+        }
+        .summary-item strong {
+            display: inline-block;
+            min-width: 180px;
+            color: #0056b3;
+        }
+         .status-message {
+            padding: 10px;
+            border-radius: 4px;
+            margin-top: 15px;
+            font-weight: bold;
+            text-align: center;
+         }
+         .status-success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+         }
+          .status-warning {
+            background-color: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeeba;
+         }
+         .status-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+         }
+         .chart-container {
+             width: 80%;
+             max-width: 800px;
+             margin: 20px auto;
+         }
+         /* Responsive adjustments */
+         @media (max-width: 768px) {
+            .controls-grid {
+                grid-template-columns: 1fr;
+            }
+             h1 { font-size: 1.8em; }
+             .container { padding: 15px; }
+             .chart-container { width: 95%; }
+             th, td { white-space: normal; } /* Allow wrapping on small screens */
+         }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Advanced Paddy Bid Analyzer (TSV Support)</h1>
+
+        <div class="control-group">
+             <label for="dataInput">Paste Raw Bid Data Here (TSV Format Supported):</label>
+             <textarea id="dataInput" placeholder="Paste Tab-Separated Data including header row..."></textarea>
+        </div>
+        <div id="parseStatus" class="status-message" style="display: none;"></div>
+
+        <div class="controls-grid">
+             <!-- Removed Ext Left Filter -->
+             <div class="control-group">
+                 <label for="outputCount">Max Results Per Section:</label>
+                 <select id="outputCount">
+                      <option value="-1">Show All</option>
+                     <option value="10">Top 10</option>
+                     <option value="25">Top 25</option>
+                     <option value="50">Top 50</option>
+                     <option value="100">Top 100</option>
+                 </select>
+             </div>
+            <div class="control-group">
+                <label>Filter by Best Bid Range (After Analysis):</label>
+                <div style="display: flex; gap: 5px;">
+                    <input type="number" id="minBidFilter" placeholder="Min Bid" style="width: 45%;">
+                    <input type="number" id="maxBidFilter" placeholder="Max Bid" style="width: 45%;">
+                </div>
+            </div>
+             <div class="control-group">
+                 <label>&nbsp;</label> <!-- Spacer for alignment -->
+                 <button onclick="processData()">Analyze Bids</button>
+             </div>
+             <div class="control-group">
+                 <label>&nbsp;</label> <!-- Spacer for alignment -->
+                 <button onclick="applyBidRangeFilter()" class="secondary">Apply Bid Range Filter</button>
+            </div>
+        </div>
+
+
+        <div id="results">
+            <!-- Results will be displayed here -->
+            <div id="summary" class="summary-box" style="display: none;">
+                <h2>Summary Statistics</h2>
+                <div id="summary-content"></div>
+            </div>
+
+            <!-- Graph Section -->
+            <div id="graph-section" class="result-section" style="display: none;">
+                 <h2>Data Visualizations</h2>
+                 <div class="chart-container">
+                      <canvas id="boxPlotChart"></canvas>
+                 </div>
+            </div>
+            <!-- End Graph Section -->
+
+
+            <div id="overall-bids" class="result-section" style="display: none;">
+                <h2>All Bids (Sorted by Lowest Best Bid)</h2>
+                <div id="overall-bids-content" class="scrollable-content"></div>
+            </div>
+
+            <!-- Removed Acq Cost Section -->
+
+            <!-- Keep Active Bids Section? Maybe not relevant for TSV? Hide for now. -->
+             <!-- <div id="active-bids" class="result-section" style="display: none;">
+                <h2>Bids Where 'My Last Bid' > 0 (Sorted by Lowest Best Bid)</h2>
+                <div id="active-bids-content" class="scrollable-content"></div>
+            </div> -->
+
+             <div id="paddy-type-bids" class="result-section" style="display: none;">
+                <h2>Bids Grouped by Paddy Type (Variety)</h2>
+                <div id="paddy-type-bids-content"></div>
+            </div>
+
+            <div id="warehouse-bids" class="result-section" style="display: none;">
+                <h2>Bids Grouped by Warehouse/District</h2>
+                <div id="warehouse-bids-content"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allParsedBids = [];
+        let currentlyDisplayedBids = {};
+        let activeCharts = {};
+
+        function setStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('parseStatus');
+            statusDiv.textContent = message;
+            statusDiv.className = 'status-message';
+            if (type === 'success') statusDiv.classList.add('status-success');
+            else if (type === 'warning') statusDiv.classList.add('status-warning');
+            else if (type === 'error') statusDiv.classList.add('status-error');
+            statusDiv.style.display = message ? 'block' : 'none';
+        }
+
+        // --- NEW TSV Parser ---
+        function parseData(text) {
+            const bids = [];
+            let parseErrors = 0;
+            let skippedLines = 0;
+            const expectedColumns = 8; // Based on sample header
+            setStatus('Parsing TSV data...', 'info');
+
+            const lines = text.trim().split('\n');
+
+            if (lines.length < 2) {
+                setStatus('No data rows found. Ensure data includes a header and at least one data row.', 'error');
+                return [];
+            }
+
+            // Assume first line is header, skip it
+            for (let i = 1; i < lines.length; i++) {
+                const line = lines[i].trim();
+                if (!line) {
+                    skippedLines++;
+                    continue; // Skip empty lines
+                }
+
+                const columns = line.split('\t'); // Split by TAB
+
+                if (columns.length !== expectedColumns) {
+                    console.warn(`Skipping line ${i + 1}: Expected ${expectedColumns} columns, found ${columns.length}. Line: "${line}"`);
+                    parseErrors++;
+                    continue;
+                }
+
+                try {
+                    const stackNo = columns[0]?.trim();
+                    const warehouseDistrictVarietyRaw = columns[1]?.trim();
+                    const allocQty = parseInt(columns[2], 10);
+                    const bidQtyTSV = parseInt(columns[3], 10); // This is the 'Bid Qty.' from TSV
+                    const maxBid = parseInt(columns[4], 10);
+                    const bestBid = parseInt(columns[5], 10);
+                    const startDate = columns[6]?.trim(); // Format YYYY-MM-DD
+                    const timeSlot = columns[7]?.trim(); // Format HH:MM
+
+                    // Basic validation
+                    if (!stackNo || isNaN(bestBid)) {
+                         console.warn(`Skipping line ${i + 1}: Missing Stack No or invalid Best Bid. Line: "${line}"`);
+                         parseErrors++;
+                         continue;
+                    }
+
+                    // --- Derive fields needed by the rest of the code ---
+                    let warehouseDistrict = 'N/A';
+                    let variety = 'N/A';
+                    // Attempt to parse Warehouse/District/Variety if not 'NA'
+                    if (warehouseDistrictVarietyRaw && warehouseDistrictVarietyRaw !== 'NA') {
+                         // Simple assumption: Last word is variety, rest is warehouse/district
+                         // This might need refinement based on real data patterns
+                         const parts = warehouseDistrictVarietyRaw.split(/[\s/]+/); // Split by space or slash
+                         if (parts.length > 1) {
+                            variety = parts.pop(); // Last part as variety
+                            warehouseDistrict = parts.join(' ');
+                         } else {
+                            warehouseDistrict = warehouseDistrictVarietyRaw; // Assume only warehouse/district if single part
+                         }
+                    }
+
+                    // Add the parsed bid
+                    bids.push({
+                        // Fields from TSV
+                        stackNo,
+                        allocQty: isNaN(allocQty) ? 0 : allocQty,
+                        bidQtyTSV: isNaN(bidQtyTSV) ? 0 : bidQtyTSV,
+                        maxBid: isNaN(maxBid) ? 0 : maxBid,
+                        bestBid,
+                        startDate,
+                        timeSlot,
+                        warehouseDistrict, // Parsed
+                        variety,           // Parsed
+
+                        // Fields NOT in TSV, set defaults needed by templates/logic
+                        aqCost: null,        // No equivalent in TSV
+                        bidQty: null,        // The 'decimal' bid qty from old format - null here
+                        myLastBid: 0,        // No equivalent in TSV
+                        extLeft: null,       // No equivalent in TSV
+                        timeValue: timeSlot  // Use timeSlot for consistency if needed, though format differs
+                    });
+
+                } catch (e) {
+                    console.error(`Error parsing line ${i + 1}:`, e, `Line: "${line}"`);
+                    parseErrors++;
+                }
+            }
+
+            // Final status update
+            const totalProcessed = lines.length - 1 - skippedLines;
+            if (bids.length > 0 && parseErrors === 0) {
+                setStatus(`Successfully parsed ${bids.length} bids from ${totalProcessed} data lines.`, 'success');
+            } else if (bids.length > 0 && parseErrors > 0) {
+                setStatus(`Parsed ${bids.length} bids, but ${parseErrors} out of ${totalProcessed} data lines had issues. Check console (F12).`, 'warning');
+            } else if (bids.length === 0 && parseErrors > 0) {
+                setStatus(`Could not parse any valid bids. ${parseErrors} out of ${totalProcessed} data lines had issues. Check console (F12).`, 'error');
+            } else if (bids.length === 0 && parseErrors === 0) {
+                setStatus(`No valid bid data rows found in the expected TSV format (processed ${totalProcessed} lines).`, 'error');
+            }
+
+            return bids;
+        }
+        // --- END NEW TSV Parser ---
+
+
+        function copyToClipboard(button, text) {
+            navigator.clipboard.writeText(text).then(() => {
+                const originalText = button.textContent;
+                button.textContent = 'Copied!';
+                button.classList.add('copied');
+                setTimeout(() => {
+                    button.textContent = originalText;
+                    button.classList.remove('copied');
+                }, 1500);
+            }).catch(err => {
+                console.error('Failed to copy text: ', err);
+                alert('Failed to copy text.');
+            });
+        }
+
+         // Updated table generation for TSV fields
+         function generateTable(bidsArray, sectionId) {
+             currentlyDisplayedBids[sectionId] = bidsArray;
+
+            if (!bidsArray || bidsArray.length === 0) {
+                return '<p>No data available for this section.</p>';
+            }
+            // Adjusted headers for TSV data
+            const headers = ['Rank', 'Stack No', 'Best Bid', 'Max Bid', 'Variety', 'Warehouse/District', 'Alloc Qty', 'Bid Qty (TSV)', 'Start Date', 'Time Slot'];
+            let tableHtml = `
+                <table>
+                    <thead>
+                        <tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr>
+                    </thead>
+                    <tbody>`;
+            bidsArray.forEach((bid, index) => {
+                tableHtml += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${bid.stackNo} <button class="copy-btn" onclick="copyToClipboard(this, '${bid.stackNo}')">Copy</button></td>
+                        <td class="bid-value">${bid.bestBid}</td>
+                        <td>${bid.maxBid}</td>
+                        <td>${bid.variety ?? 'N/A'}</td>
+                        <td>${bid.warehouseDistrict ?? 'N/A'}</td>
+                        <td>${bid.allocQty ?? 0}</td>
+                        <td>${bid.bidQtyTSV ?? 0}</td>
+                        <td>${bid.startDate ?? 'N/A'}</td>
+                        <td>${bid.timeSlot ?? 'N/A'}</td>
+                        <!-- Removed columns not present in TSV: My Last Bid, Acq Cost, Bid Qty (old), Ext Left -->
+                    </tr>`;
+            });
+            tableHtml += `</tbody></table>`;
+            return tableHtml;
+        }
+
+        // Updated Chart Generation - Example groups by Time Slot
+        function generateGraphs(data) {
+            const graphSection = document.getElementById('graph-section');
+            if (!data || data.length === 0) {
+                 if (graphSection) graphSection.style.display = 'none';
+                 return;
+            }
+             if (graphSection) graphSection.style.display = 'block';
+
+            const canvasIdBoxPlot = 'boxPlotChart';
+            const ctxBoxPlot = document.getElementById(canvasIdBoxPlot)?.getContext('2d');
+
+             if (!ctxBoxPlot) {
+                 console.error(`Canvas element with ID '${canvasIdBoxPlot}' not found! Cannot generate graph.`);
+                 if (graphSection) graphSection.style.display = 'none';
+                return;
+             }
+
+            if (activeCharts[canvasIdBoxPlot]) {
+                activeCharts[canvasIdBoxPlot].destroy();
+                delete activeCharts[canvasIdBoxPlot];
+                console.log(`Destroyed previous chart on canvas '${canvasIdBoxPlot}'`);
+            }
+
+            // --- Prepare data for the box plot ---
+            // !!! Example: Group by Time Slot !!!
+            const groupedByTimeSlot = {};
+            data.forEach(bid => {
+                const key = bid.timeSlot || 'Unknown'; // Group by timeSlot
+                if (!groupedByTimeSlot[key]) groupedByTimeSlot[key] = [];
+                groupedByTimeSlot[key].push(bid.bestBid);
+            });
+
+             const labels = Object.keys(groupedByTimeSlot).sort(); // Sort labels (time order)
+             const boxPlotDatasetData = labels.map(label => {
+                 const values = groupedByTimeSlot[label];
+                 return values.length > 0 ? values : null; // Pass raw values array
+             }).filter(d => d !== null);
+
+
+             if (boxPlotDatasetData.length === 0) {
+                console.warn("No data available to generate boxplot after grouping.");
+                if (graphSection) graphSection.style.display = 'none';
+                return;
+             }
+
+            const boxPlotData = {
+                labels: labels.filter(label => groupedByTimeSlot[label].length > 0),
+                datasets: [{
+                    label: 'Best Bid Distribution by Time Slot', // Updated Label
+                    backgroundColor: 'rgba(40, 167, 69, 0.5)', // Greenish color
+                    borderColor: 'rgb(40, 167, 69)',
+                    borderWidth: 1, padding: 10, itemRadius: 3, outlierColor: '#999999',
+                    data: boxPlotDatasetData
+                }]
+            };
+
+            try {
+                 activeCharts[canvasIdBoxPlot] = new Chart(ctxBoxPlot, {
+                    type: 'boxplot',
+                    data: boxPlotData,
+                    options: {
+                        responsive: true, maintainAspectRatio: true,
+                        plugins: { legend: { display: true, position: 'top' }, title: { display: true, text: 'Best Bid Distribution by Time Slot' } }, // Updated Title
+                         scales: { y: { beginAtZero: false, title: { display: true, text: 'Best Bid Price' } }, x: { title: { display: true, text: 'Time Slot' } } } // Updated Axis Label
+                    }
+                 });
+                  console.log(`Created new chart on canvas '${canvasIdBoxPlot}'`);
+            } catch (e) {
+                 console.error("Error creating boxplot chart:", e);
+                 setStatus("Error creating charts. Check console.", "error");
+                  if (graphSection) graphSection.style.display = 'none';
+            }
+        }
+
+
+         function processData() {
+            const inputText = document.getElementById('dataInput').value;
+            // Get references to all result divs
+            const summaryDiv = document.getElementById('summary');
+            const graphSection = document.getElementById('graph-section');
+            const overallBidsDiv = document.getElementById('overall-bids');
+            // const acqCostBidsDiv = document.getElementById('acq-cost-bids'); // Removed
+            // const activeBidsDiv = document.getElementById('active-bids'); // Removed/Hidden
+            const paddyTypeBidsDiv = document.getElementById('paddy-type-bids');
+            const warehouseBidsDiv = document.getElementById('warehouse-bids');
+
+             // --- Clear previous results and hide sections ---
+             // Added warehouseBidsDiv to clear list
+             const sections = [summaryDiv, graphSection, overallBidsDiv, paddyTypeBidsDiv, warehouseBidsDiv];
+             sections.forEach(sec => {
+                 if (sec) {
+                     const contentDiv = sec.querySelector('div[id$="-content"], .chart-container');
+                     const canvas = sec.querySelector('canvas');
+                     if (canvas && activeCharts[canvas.id]) {
+                         activeCharts[canvas.id].destroy(); delete activeCharts[canvas.id];
+                     }
+                     if (contentDiv && sec !== graphSection) contentDiv.innerHTML = '';
+                     sec.style.display = 'none';
+                 }
+             });
+             currentlyDisplayedBids = {}; activeCharts = {};
+
+
+            if (!inputText.trim()) {
+                setStatus('Please paste data into the text area.', 'error');
+                return;
+            }
+
+            allParsedBids = parseData(inputText); // Use new TSV parser
+
+            if (allParsedBids.length === 0) return;
+
+            // Removed Ext Left filter logic
+            let filteredBids = allParsedBids; // No pre-filter needed now
+            const outputCount = parseInt(document.getElementById('outputCount').value);
+
+            // --- Summary ---
+            const totalStacks = filteredBids.length;
+            const totalBidSum = filteredBids.reduce((sum, bid) => sum + bid.bestBid, 0);
+            const averageBid = totalStacks > 0 ? (totalBidSum / totalStacks).toFixed(2) : 'N/A';
+            document.getElementById('summary-content').innerHTML = `
+                <div class="summary-item"><strong>Total Stacks Found:</strong> ${totalStacks}</div>
+                <div class="summary-item"><strong>Average Best Bid:</strong> ${averageBid}</div>
+            `;
+            summaryDiv.style.display = 'block';
+
+             const sliceResults = (arr) => (outputCount === -1) ? arr : arr.slice(0, outputCount);
+
+             // --- Overall Bids ---
+             const sortedOverall = [...filteredBids].sort((a, b) => a.bestBid - b.bestBid);
+             document.getElementById('overall-bids-content').innerHTML = generateTable(sliceResults(sortedOverall), 'overall-bids-content');
+             overallBidsDiv.style.display = 'block';
+
+            // --- Acq Cost Section Removed ---
+
+            // --- Active Bids Section Removed ---
+
+            // --- Paddy Type Groups ---
+            const groupedByVariety = {};
+            filteredBids.forEach(bid => {
+                const type = bid.variety ?? 'N/A'; // Handle potential nulls
+                if (!groupedByVariety[type]) groupedByVariety[type] = [];
+                groupedByVariety[type].push(bid);
+            });
+            const paddyTypeBidsContent = document.getElementById('paddy-type-bids-content');
+            paddyTypeBidsContent.innerHTML = '';
+            Object.keys(groupedByVariety).sort().forEach(type => {
+                 const groupBids = groupedByVariety[type].sort((a, b) => a.bestBid - b.bestBid);
+                 const sectionId = `paddy-type-${type.replace(/[^a-zA-Z0-9]/g, '_')}-content`; // Safer ID
+                 paddyTypeBidsContent.innerHTML += `
+                     <h3 style="margin-top:25px;">Paddy Type: ${type} (${groupBids.length} stacks)</h3>
+                     <div id="${sectionId}" class="scrollable-content">${generateTable(sliceResults(groupBids), sectionId)}</div>`;
+             });
+             if (Object.keys(groupedByVariety).length > 0) paddyTypeBidsDiv.style.display = 'block';
+
+             // --- Warehouse Groups ---
+            const groupedByWarehouse = {};
+            filteredBids.forEach(bid => {
+                const wh = bid.warehouseDistrict ?? 'N/A'; // Handle potential nulls
+                 if (!groupedByWarehouse[wh]) groupedByWarehouse[wh] = [];
+                 groupedByWarehouse[wh].push(bid);
+            });
+             const warehouseBidsContent = document.getElementById('warehouse-bids-content');
+             warehouseBidsContent.innerHTML = '';
+             Object.keys(groupedByWarehouse).sort().forEach(wh => {
+                 const groupBids = groupedByWarehouse[wh].sort((a, b) => a.bestBid - b.bestBid);
+                  const safeIdPart = wh.replace(/[^a-zA-Z0-9]/g, '_');
+                 const sectionId = `warehouse-${safeIdPart}-content`;
+                 warehouseBidsContent.innerHTML += `
+                     <h3 style="margin-top:25px;">Warehouse: ${wh} (${groupBids.length} stacks)</h3>
+                     <div id="${sectionId}" class="scrollable-content">${generateTable(sliceResults(groupBids), sectionId)}</div>`;
+             });
+            if (Object.keys(groupedByWarehouse).length > 0) warehouseBidsDiv.style.display = 'block';
+
+            // --- Generate Graphs ---
+             generateGraphs(filteredBids);
+
+            // Apply initial bid range filter
+             applyBidRangeFilter();
+         }
+
+         function applyBidRangeFilter() {
+             const minBid = parseFloat(document.getElementById('minBidFilter').value);
+             const maxBid = parseFloat(document.getElementById('maxBidFilter').value);
+             const hasMin = !isNaN(minBid);
+             const hasMax = !isNaN(maxBid);
+
+            if (!hasMin && !hasMax) {
+                document.querySelectorAll('#results tbody tr').forEach(row => row.classList.remove('hidden-row'));
+                return;
+            }
+
+             document.querySelectorAll('#results tbody tr').forEach(row => {
+                 const bidCell = row.querySelector('td.bid-value');
+                 if (bidCell) {
+                     const bidValue = parseFloat(bidCell.textContent);
+                     if (!isNaN(bidValue)) {
+                         let show = true;
+                         if (hasMin && bidValue < minBid) show = false;
+                         if (hasMax && bidValue > maxBid) show = false;
+                         row.classList.toggle('hidden-row', !show);
+                     } else { row.classList.remove('hidden-row'); }
+                 } else { row.classList.remove('hidden-row'); }
+             });
+         }
+
+        // Event Listeners
+        document.getElementById('dataInput').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); processData(); }
+        });
+        document.getElementById('minBidFilter').addEventListener('keypress', function(event) {
+            if (event.key === 'Enter') { applyBidRangeFilter(); }
+        });
+        document.getElementById('maxBidFilter').addEventListener('keypress', function(event) {
+             if (event.key === 'Enter') { applyBidRangeFilter(); }
+        });
+
+    </script>
+
+</body>
+</html>
