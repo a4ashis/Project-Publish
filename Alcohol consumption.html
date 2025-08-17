@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Classy Guide to Responsible Drinking</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Lato:wght@400;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            line-height: 1.7;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            background-image: url('data:image/svg+xml,%3Csvg width="60" height="60" viewBox="0 0 60 60" xmlns="http://www.w3.org/2000/svg"%3E%3Cg fill="none" fill-rule="evenodd"%3E%3Cg fill="%23c7a775" fill-opacity="0.1"%3E%3Cpath d="M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z"/%3E%3C/g%3E%3C/g%3E%3C/svg%3E');
+            color: #e0e0e0;
+        }
+        .container {
+            width: 90%;
+            max-width: 1000px;
+            margin: auto;
+            overflow: hidden;
+            padding: 0 20px;
+        }
+        header {
+            background: rgba(0,0,0,0.5);
+            color: #d4af37;
+            padding: 2rem 0;
+            text-align: center;
+            border-bottom: 3px solid #d4af37;
+        }
+        header h1 {
+            margin: 0;
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            text-shadow: 2px 2px 4px #000;
+        }
+        .section {
+            background: rgba(0,0,0,0.4);
+            margin: 25px 0;
+            padding: 25px;
+            border-radius: 8px;
+            border: 1px solid #444;
+            box-shadow: 0 8px 15px rgba(0,0,0,0.3);
+        }
+        .section h2 {
+            font-family: 'Playfair Display', serif;
+            color: #d4af37;
+            border-bottom: 1px solid #d4af37;
+            padding-bottom: 10px;
+            margin-top: 0;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        ul li {
+            background: rgba(255, 255, 255, 0.05);
+            margin-bottom: 10px;
+            padding: 15px;
+            border-left: 5px solid #d4af37;
+            border-radius: 4px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #444;
+        }
+        th {
+            background-color: #d4af37;
+            color: #1a1a1a;
+            font-family: 'Playfair Display', serif;
+        }
+        tr:nth-child(even) {
+            background-color: rgba(255, 255, 255, 0.03);
+        }
+        .calculator-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        .calculator-inputs {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+            align-items: end;
+        }
+        .calculator-inputs div {
+            display: flex;
+            flex-direction: column;
+        }
+        .calculator-inputs label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #d4af37;
+        }
+        .calculator-inputs input, .calculator-inputs select, .calculator-inputs button {
+            padding: 12px;
+            border-radius: 5px;
+            border: 1px solid #555;
+            background: #2a2a2a;
+            color: #e0e0e0;
+            font-size: 1rem;
+        }
+        .calculator-inputs button {
+            background: #d4af37;
+            color: #1a1a1a;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+        }
+        .calculator-inputs button:hover {
+            background-color: #b8860b;
+        }
+        #result, .formula {
+            margin-top: 20px;
+            padding: 20px;
+            background: rgba(212, 175, 55, 0.1);
+            border-left: 5px solid #d4af37;
+            font-size: 1.2rem;
+            line-height: 1.8;
+        }
+        .formula code {
+            background: rgba(0,0,0,0.5);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+        }
+        .disclaimer {
+            font-size: 0.9rem;
+            color: #999;
+            margin-top: 15px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>A Guide to Responsible Drinking</h1>
+        </div>
+    </header>
+
+    <div class="container">
+        
+        <div class="section">
+            <h2>Daily Consumption Calculator</h2>
+            <div class="calculator-wrapper">
+                <div class="calculator-inputs">
+                    <div>
+                        <label for="gender">Your Gender:</label>
+                        <select id="gender">
+                            <option value="male">Male</option>
+                            <option value="female">Female</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="abv">Drink's ABV (%):</label>
+                        <input type="number" id="abv" placeholder="e.g., 5 for beer, 40 for whisky">
+                    </div>
+                    <div>
+                        <button onclick="calculateConsumption()">Calculate Limit</button>
+                    </div>
+                </div>
+                <div id="result" style="display:none;"></div>
+            </div>
+             <p class="disclaimer"><strong>Disclaimer:</strong> This is an educational tool, not medical advice. Your body's reaction can vary based on food, health, and metabolism. **The safest amount of alcohol is zero.** Never drink and drive.</p>
+        </div>
+
+        <div class="section formula">
+            <h3>How It's Calculated</h3>
+            <p>This calculator determines the volume of your chosen drink that corresponds to the recommended daily limit for moderate consumption. The limit is based on "standard drinks":</p>
+            <ul>
+                <li><strong>Men:</strong> Up to 2 Standard Drinks per day.</li>
+                <li><strong>Women:</strong> Up to 1 Standard Drink per day.</li>
+            </ul>
+            <p><strong>Formula:</strong></p>
+            <p><code>Volume per Standard Drink (ml) = 17.74 / (Your Drink's ABV / 100)</code></p>
+            <p>This is derived from the fact that one standard drink contains 14g of pure alcohol (ethanol), and ethanol's density is 0.789 g/ml.</p>
+        </div>
+
+        <div class="section">
+            <h2>7 Key Principles for Safer Drinking</h2>
+            <ul>
+                <li><strong>1. Quantity is Paramount:</strong> The most critical factor. The more you drink, the higher the risk. Stick to the moderate limits calculated above.</li>
+                <li><strong>2. Choose Quality:</strong> Higher quality spirits often have fewer impurities (congeners), which can reduce the severity of hangovers. Avoid cheap or illicit alcohol.</li>
+                <li><strong>3. Understand ABV:</strong> A "drink" isn't standard. A 45ml shot of 40% whisky has the same alcohol as a 350ml glass of 5% beer. Know your drink's strength.</li>
+                <li><strong>4. Mind the Calories:</strong> Alcohol itself has 7 calories/gram. Your body can't use these for energy, so they're readily converted to fat, particularly harmful visceral fat.</li>
+                <li><strong>5. Avoid Cocktails & Mixers:</strong> Sugary mixers (juice, soda) can double the calories of a drink, overload the liver, and make you crave more. They are a primary cause of "beer belly" and weight gain.</li>
+                <li><strong>6. Eat First, Hydrate Always:</strong> Never drink on an empty stomach. A meal with protein and healthy fats slows alcohol absorption. Drink a glass of water for every alcoholic drink to combat dehydration.</li>
+                <li><strong>7. Don't Drink Alone:</strong> Drinking is a social activity. Using it as a coping mechanism while alone can lead to dependency and is linked with poorer health outcomes.</li>
+            </ul>
+        </div>
+        
+        <div class="section">
+            <h2>Alcohol Facts & Figures: A Quick Reference</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Alcohol Type</th>
+                        <th>ABV (Approx.)</th>
+                        <th>Volume per Standard Drink</th>
+                        <th>Calories (Avg.)</th>
+                        <th>Key Considerations</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Beer (regular)</td>
+                        <td>5%</td>
+                        <td>~350 ml</td>
+                        <td>150-170 kcal</td>
+                        <td>High in carbs; contains gluten. Very calorie-dense.</td>
+                    </tr>
+                    <tr>
+                        <td>Wine (Red/White)</td>
+                        <td>12-14%</td>
+                        <td>~150 ml</td>
+                        <td>120-130 kcal</td>
+                        <td>Contains sugar (fructose) and sulfites. Stresses the liver.</td>
+                    </tr>
+                    <tr>
+                        <td>Spirits (Vodka, Whisky, etc.)</td>
+                        <td>40%</td>
+                        <td>~45 ml</td>
+                        <td>95-100 kcal</td>
+                        <td>No carbs, but dark liquors have congeners. Avoid sugary mixers at all costs.</td>
+                    </tr>
+                    <tr>
+                        <td>Liqueurs (Kahlua, Baileys)</td>
+                        <td>15-30%</td>
+                        <td>~45 ml</td>
+                        <td>160-250 kcal</td>
+                        <td>Effectively a "sugar bomb" with alcohol. Extremely high in calories.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function calculateConsumption() {
+            const gender = document.getElementById('gender').value;
+            const abv = parseFloat(document.getElementById('abv').value);
+
+            if (isNaN(abv) || abv <= 0 || abv > 100) {
+                alert("Please enter a valid ABV percentage (e.g., 40 for 40%).");
+                return;
+            }
+
+            const PURE_ALCOHOL_GRAMS = 14;
+            const ETHANOL_DENSITY = 0.789; // g/ml
+            
+            const volumePerStandardDrink = (PURE_ALCOHOL_GRAMS / ETHANOL_DENSITY) / (abv / 100);
+            
+            const drinksLimit = (gender === 'male' ? 2 : 1);
+            const totalVolumeLimit = drinksLimit * volumePerStandardDrink;
+
+            let message = `Based on a <strong>${abv}% ABV</strong> drink, the recommended moderate daily limit is:<br><br>
+                           <strong style="font-size: 1.5rem; color: #fff;">${Math.round(totalVolumeLimit)} ml</strong>`;
+
+            document.getElementById('result').innerHTML = message;
+            document.getElementById('result').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
